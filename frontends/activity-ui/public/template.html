@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reputation Dashboard</title>
+  <!-- Link to Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+  <!-- Additional styles can be added here if needed -->
+</head>
+
+<body>
+
+  <!-- Nav Bar-->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Reputation</a>
+    <div class="navbar-collapse justify-content-center" id="navbarNav">
+      <span id="keplrDidId"></span>
+    </div>
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <button class="nav-link btn btn-primary text-white" id="WalletLogin">Connect Keplr</button>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <div class="row">
+    
+      <!-- Column for Cards -->
+      <div class="col-md-8" id="cardParent"> <!-- Adjust the size as needed -->
+        <h1>NO ACTIVITIES :(</h1>
+      </div>
+  
+      <!-- Column for Circular Progress -->
+      <div class=""> <!-- Adjust the size as needed -->
+        <div class="circle-container">
+          <div class="circle">
+            <div class="score" id="didScore">0</div>
+          </div>
+        </div>
+        <div>
+          <button id="scoreRefreshBtn">Refresh Score</button>
+        </div>
+      </div>
+  
+    </div>
+  </div>
+
+  <!-- Link to jQuery -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <!-- Link to Popper.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <!-- Link to Bootstrap JS -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

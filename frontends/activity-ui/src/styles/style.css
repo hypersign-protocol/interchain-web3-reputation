@@ -1,0 +1,21 @@
+.circle-container {
+    display: flex;
+    justify-content: center; /* Center the circle horizontally */
+    align-items: center; /* Center the circle vertically */
+    height: 200px; /* Adjust the height as needed */
+}
+
+.circle {
+    width: 100px; /* Diameter of the circle */
+    height: 100px; /* Diameter of the circle */
+    background-color: #007bff; /* Circle color, using Bootstrap primary color */
+    border-radius: 50%; /* Makes the div circular */
+    display: flex;
+    justify-content: center; /* Aligns the text horizontally */
+    align-items: center; /* Aligns the text vertically */
+}
+
+.score {
+    color: white; /* Text color */
+    font-size: 2em; /* Text size */
+}
