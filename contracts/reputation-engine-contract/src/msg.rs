@@ -4,7 +4,9 @@ use schemars::JsonSchema;
 use serde::{Serialize, Deserialize};
 
 #[cw_serde]
-pub struct InstantiateMsg {}
+pub struct InstantiateMsg {
+    pub activity_manager_contract_address: String
+}
 
 #[cw_serde]
 pub enum ExecuteMsg {}
@@ -14,13 +16,11 @@ pub enum ExecuteMsg {}
 pub enum QueryMsg {
     #[returns(QueryScoreResponse)]
     QueryScoreByDidId {
-        contract_address: String,
         did_id: String
     },
 
     #[returns(QueryScoreResponse)]
     QueryScoreByAddress {
-        contract_address: String,
         user_address: String
     }
 }

@@ -1,5 +1,5 @@
 [package]
-name = "activity-manager-contract"
+name = "airdrop-contract"
 version = "0.1.0"
 authors = ["Arnab Ghose <arnab.ghose128@gmail.com>"]
 edition = "2021"
@@ -29,6 +29,7 @@ cosmwasm-std = { version = "1.5.0", features = [
     # Enable this if you only deploy to chains that have CosmWasm 1.4 or higher
     # "cosmwasm_1_4",
 ] }
+reputation-engine-contract = { path = "../reputation-engine-contract" }
 cw-storage-plus = "1.1.0"
 cw2 = "1.1.1"
 schemars = "0.8.15"

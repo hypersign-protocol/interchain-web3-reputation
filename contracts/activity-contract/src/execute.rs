@@ -27,10 +27,6 @@ pub fn execute_verify_activity(deps: DepsMut, env: Env, activity_params: Binary,
             ContractError::Std(StdError::not_found(format!("DID Document '{}' not found", did_id)))
         })?;
 
-        // Return an error if an activity is already done by the did
-        if ACTIVITY_MAP.has(deps.storage, did_id.clone()) {
-            return Err(ContractError::Std(StdError::generic_err("activity has already been performed")))
-        }
 
         let wallet_address = get_blockchain_address(&did_doc);
         let denom: &str = "uhid";

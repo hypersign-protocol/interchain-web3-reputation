@@ -70,8 +70,15 @@ pub fn query_did_id_from_address(deps: Deps, address: &String) -> StdResult<Quer
         address: address.into()
     });
 
-    let res: QueryDidDocumentFromAddressResponse = query(deps, &request)?;
-    Ok(res)
+    let _: QueryDidDocumentFromAddressResponse = match query(deps, &request) {
+        Err(_) => {
+            return Ok(QueryDidDocumentFromAddressResponse { did_id: "".to_string() })
+        },      
+        Ok(res) => {
+            return Ok(res)
+        }
+    };
+    
 }
 
 fn query<U: DeserializeOwned>(deps: Deps, request: &QueryRequest<SsiQuery>) -> StdResult<U> {
