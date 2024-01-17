@@ -37,34 +37,42 @@ export function constructQueryActivitiesByDidId(didId) {
     }
 }
 
-export function constructQueryReputationScore(didId, activity_contract) {
+export function constructQueryReputationScore(address) {
     return {
-        "query_score_by_did_id": {
-            "did_id": didId,
+        "query_score_by_address": {
+            "user_address": address
         }
     }
 }
 
-export function constructExecutePerformActivity(activityId, didId) {
-    let activityParams = btoa(JSON.stringify(
-        {
-            "did_id": didId
-        }
-    ))
-
-    return  {
-        "perform_activity": {
-            "activity_id": activityId,
-            "activity_params": activityParams
+export function constructQueryEligibilityAirdrop(address, reputationContractAddress) {
+    return {
+        "eligibity": {
+            "address": address,
+            "reputation_contract_address": reputationContractAddress
         }
     }
 }
 
-export function findAlreadyDoneActivities(activityList, activity) {
-    for (var i = 0; i < activityList.length; i++) {
-        if (activity.id === activityList[i].id) {
-            return true
+export function constructQueryAirdropFunds() {
+    return {
+        "get_contract_balance": {}
+    }
+}
+
+export function constructQueryIfAirdropDone(address) {
+    return {
+        "get_airdrop_status": {
+            "address": address
         }
     }
-    return false
+}
+
+export function constructExecuteClaimAirdrop(address, reputationContractAddress) {
+    return {
+        "claim_airdrop": {
+            "user_address": address,
+            "reputation_contract_adress": reputationContractAddress
+        }
+    }
 }

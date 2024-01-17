@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Airdrop DApp</title>
+  <!-- Link to Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+    integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+  <!-- Additional styles can be added here if needed -->
+</head>
+
+<body>
+
+  <!-- Nav Bar-->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#"><b>$HID Airdrop</b></a>
+    <div class="navbar-collapse justify-content-center" id="navbarNav"></div>
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <button class="nav-link btn btn-primary text-white" id="WalletLogin"><i class="fas fa-sync" id="icon-keplr"></i> Connect Keplr</button>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <div class="column">
+
+      <!-- Airdrop Title -->
+      <div class="col-md-12 text-center">
+        <div class="card border-0">
+          <div class="card-body">
+            <h1 style="color: #1085eb;">Claim Your Reputation Based Airdrop</h1>
+          </div>
+        </div>
+      </div>
+
+      <!-- Funds Left in Airdrop Pool -->
+      <div class="col-md-12 text-center" style="display: none;" id="airdrop-pool-card">
+        <div class="card border-0">
+          <div class="card-body mt-1" style="padding-top: 0em;">
+            <h4 style="color: #ed4ca7;"><b>Funds left in Airdrop Pool: <span id="funds"></span> HID</b></h4>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column for Claim Card -->
+      <br>
+      <div class="col-md-12 text-center mt-4">
+        <div class="card" id="claimCard" style="border-width: 3px !important; border-style: dashed;">
+          <div class="card-body">
+            <div class="form-group">
+              <input id="walletAddressInput" type="text" class="form-control" placeholder="Connect your Wallet"
+                disabled style="font-size: 20px;">
+              <div>
+                <span id="error-msg" style="color: rgb(224, 14, 7);"></span>
+              </div>
+            </div>
+            <div>
+              <button id="claimBtn" class="btn btn-success" disabled style="font-size: 21px;">Claim</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Link to jQuery -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <!-- Link to Popper.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <!-- Link to Bootstrap JS -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

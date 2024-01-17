@@ -34,7 +34,6 @@ let cardParent = document.getElementById("cardParent");
 
 // Global vars (Keplr)
 let didId = ""
-let activeSmartContractAddress = ""; // User Input Smart Contract Address
 let offlineSigner = ""; // Keplr Signer
 let signingClient = null;
 let userAddress = "";
@@ -48,26 +47,48 @@ let activitiesByDidId = [];
 let activityIdx = null;
 
 // Contract Addresses
-const reputationEngineContractAddress = "hid1m2q842a5sr6tg0v2dpezzrgd3exvs03hwd2aftluqcfhqukary8qczxs7v";
-const activityManagerContractAddress = "hid13g2vzgzdjax4d3gwd6xzh7axe4avt74u97xllthyr8qyc6rln0nq7yum2a"
+const reputationEngineContractAddress = "hid1ver9t425fhvgwjmupfr4wzmn6df97lszldwlekslkky64v4wwptqudpyxj";
+const activityManagerContractAddress = "hid1tvxnjymtdk3wqg4rtkwkjyz5frjswaxxnl4je6wmfnk7lwucjh5s0wupe6"
 
 
 // Load the address upon connecting the wallet
 // and enable the input field to enter Smart Contract
 walletConnectButton.onclick = async () => {
-  if (!window.getOfflineSigner || !window.keplr) {
-    alert("Please install keplr extension");
+  if (walletConnectButton.textContent.includes("Disconnect")) { 
+    walletConnectButton.classList.remove("btn-secondary");
+    walletConnectButton.classList.add("btn-primary");
+    walletConnectButton.innerHTML = '<i class="fas fa-sync" id="icon-keplr"></i> Connect Keplr';
+    
+    // Remove offline signer and address
+    offlineSigner = null
+    userAddress = ""
+    cardParent.innerHTML = '<h1>NO ACTIVITIES<h1>'
+    didScore.innerText = 0
+    walletDidIdSpan.innerText = ""
+    didId = ""
+
+    return
   } else {
-    if (window.keplr.experimentalSuggestChain) {
-      try {
-        await window.keplr.experimentalSuggestChain(
-            chainConfig
-        );
-      } catch {
-        alert("Failed to suggest the chain");
-      }
+    if (!window.getOfflineSigner || !window.keplr) {
+      alert("Please install keplr extension");
     } else {
-      alert("Please use the recent version of keplr extension");
+      if (window.keplr.experimentalSuggestChain) {
+        try {
+          await window.keplr.experimentalSuggestChain(
+              chainConfig
+          );
+
+          walletConnectButton.innerHTML = '<i class="fas fa-times" id="icon-keplr"></i> Disconnect';
+          walletConnectButton.classList.remove("btn-primary");
+          walletConnectButton.classList.add("btn-secondary");
+        } catch {
+          alert("Failed to suggest the chain");
+          return
+        }
+      } else {
+        alert("Please use the recent version of keplr extension");
+        return
+      }
     }
   }
   
@@ -115,7 +136,7 @@ cardParent.addEventListener('click', async (event) => {
     try {
       await performActivity(signingClient, userAddress, activityManagerContractAddress, didId, activityIdx[idx]);
 
-      target.innerText = 'Done';
+      target.innerHTML = '<i class="fas fa-check"></i>';
       target.disabled = true;
     } catch (error) {
       alert(error)

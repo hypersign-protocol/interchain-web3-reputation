@@ -55,7 +55,7 @@ export async function smartContractExecuteRPC(
             amount: "4000",
           },
         ],
-        gas: "20000000",
+        gas: "200000000",
     };
 
     // Exectute the contract message
