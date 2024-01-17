@@ -42,21 +42,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "airdrop-contract"
-version = "0.1.0"
-dependencies = [
- "cosmwasm-schema",
- "cosmwasm-std",
- "cw-multi-test",
- "cw-storage-plus",
- "cw2",
- "reputation-engine-contract",
- "schemars",
- "serde",
- "thiserror",
-]
-
-[[package]]
 name = "anyhow"
 version = "1.0.79"
 source = "registry+https://github.com/rust-lang/crates.io-index"
