@@ -1,5 +1,14 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
+const fs = require('fs');
+
+// Check if the .env file exists before proceeding
+const envPath = path.resolve(__dirname, '.env');
+if (!fs.existsSync(envPath)) {
+  console.error('Error: The .env file is missing.');
+  process.exit(1);
+}
 
 module.exports = {
     mode: 'development',
@@ -43,6 +52,7 @@ module.exports = {
             filename: 'index.html',
             template: 'public/template.html'
         }),
+        new Dotenv(),
     ],
     resolve: {
         fallback: {

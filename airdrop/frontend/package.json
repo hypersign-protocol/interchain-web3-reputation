@@ -12,6 +12,7 @@
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.31.0",
     "@cosmjs/stargate": "^0.31.0",
+    "dotenv-webpack": "^8.0.1",
     "multiformats": "^9.4.1"
   },
   "devDependencies": {
