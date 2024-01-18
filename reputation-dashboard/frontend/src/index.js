@@ -47,8 +47,8 @@ let activitiesByDidId = [];
 let activityIdx = null;
 
 // Contract Addresses
-const reputationEngineContractAddress = "hid1ver9t425fhvgwjmupfr4wzmn6df97lszldwlekslkky64v4wwptqudpyxj";
-const activityManagerContractAddress = "hid1tvxnjymtdk3wqg4rtkwkjyz5frjswaxxnl4je6wmfnk7lwucjh5s0wupe6"
+const reputationEngineContractAddress = process.env.REPUTATION_ENGINE_CONTRACT_ADDRESS;
+const activityManagerContractAddress = process.env.ACTIVITY_MANAGER_CONTRACT_ADDRESS;
 
 
 // Load the address upon connecting the wallet
