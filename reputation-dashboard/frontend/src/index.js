@@ -7,7 +7,8 @@ import {
   constructExecuteNFTTransfer,
   getPublicKeyMultibase,
   constructQueryReputationScore,
-  createStargateClient
+  createStargateClient,
+  createNonSigningClient
 } from './utils';
 
 import {
@@ -37,11 +38,13 @@ let walletConnectButton = document.getElementById("WalletLogin");
 let scoreRefreshBtn = document.getElementById("scoreRefreshBtn");
 let cardParent = document.getElementById("cardParent");
 let registerDidBtn = document.getElementById("registerDidBtn");
+let scoreParent = document.getElementById("score-parent");
 
 // Global vars (Keplr)
 let didId = ""
 let offlineSigner = ""; // Keplr Signer
 let signingClient = null;
+let normalClient = null
 let userAddress = "";
 let stargateSigningClient = null;
 let namespace = "devnet"
@@ -59,6 +62,13 @@ let activityIdx = null;
 const reputationEngineContractAddress = process.env.REPUTATION_ENGINE_CONTRACT_ADDRESS;
 const activityManagerContractAddress = process.env.ACTIVITY_MANAGER_CONTRACT_ADDRESS;
 
+window.onload = async () => {
+  normalClient = await createNonSigningClient(chainRPC)
+
+  // Display all Activities
+  activities = await getActivities(normalClient, activityManagerContractAddress)
+  activityIdx = populateActivities(cardParent, activities, activitiesByDidId)
+}
 
 // Load the address upon connecting the wallet
 // and enable the input field to enter Smart Contract
@@ -72,11 +82,11 @@ walletConnectButton.onclick = async () => {
     // Remove offline signer and address
     offlineSigner = null
     userAddress = ""
-    cardParent.innerHTML = '<h1>NO ACTIVITIES<h1>'
     didScore.innerText = 0
     walletDidIdSpan.innerText = ""
     didId = ""
     pubKeyMultibase = ""
+    scoreParent.style.display = "none";
 
     return
   } else {
@@ -107,13 +117,12 @@ walletConnectButton.onclick = async () => {
           } else {
             walletDidIdSpan.innerText = didId
 
-            // Activities
-            activities = await getActivities(signingClient, activityManagerContractAddress)
-            activitiesByDidId = await getActivitiesById(signingClient, activityManagerContractAddress, didId)
-
+            // Display Activities done by DID Id
+            activitiesByDidId = await getActivitiesById(normalClient, activityManagerContractAddress, didId)
             activityIdx = populateActivities(cardParent, activities, activitiesByDidId)
 
             // Get Score
+            scoreParent.style.display = "block";
             didScore.innerText = await getScore(signingClient, reputationEngineContractAddress, didId, activityManagerContractAddress)
 
            // Change Keplr Button to Disconnect
@@ -159,6 +168,9 @@ registerDidBtn.onclick = async () => {
     walletConnectButton.innerHTML = '<i class="fas fa-times" id="icon-keplr"></i> Disconnect';
     walletConnectButton.classList.remove("btn-primary");
     walletConnectButton.classList.add("btn-secondary");
+
+    // Close Modal
+    $('#customModal').modal('hide');
             
   }
 }

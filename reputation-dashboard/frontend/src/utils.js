@@ -1,4 +1,4 @@
-import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+import { SigningCosmWasmClient, CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { SigningStargateClient } from '@cosmjs/stargate'
 import { base58btc } from "multiformats/bases/base58"
 import { Registry } from "@cosmjs/proto-signing"
@@ -15,6 +15,13 @@ export async function getUserAddressFromOfflineSigner(offlineSigner) {
   const userAddress = accounts[0].address;
   return userAddress
 }
+
+export async function createNonSigningClient(rpcUrl) {
+    const client = CosmWasmClient.connect(rpcUrl)
+
+    return client
+}
+
 
 export async function createStargateClient(rpcUrl, offlineSigner) {
     const registry = new Registry()

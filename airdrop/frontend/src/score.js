@@ -1,5 +1,5 @@
 import { smartContractExecuteRPC, smartContractQueryRPC } from "./smartContract";
-import { constructQueryAirdropFunds, constructQueryIfAirdropDone } from "./utils";
+import { constructQueryAirdropFunds, constructQueryAirdropInfo, constructQueryAirdroppedAddresses, constructQueryIfAirdropDone } from "./utils";
 import { constructExecuteClaimAirdrop } from "./utils";
 import { constructQueryEligibilityAirdrop } from "./utils";
 import { constructQueryReputationScore } from "./utils";
@@ -69,4 +69,20 @@ export async function checkAirdropFundInHID(client, airdropContractAddr) {
     let resultNum = parseInt(result["amount"]["amount"], 10)
     let amountInHid = resultNum / 1000000
     return amountInHid.toFixed(2)
+}
+
+export async function getAddressList(client, airdropContractAddr) {
+    let result = await smartContractQueryRPC(client, airdropContractAddr, constructQueryAirdroppedAddresses())
+    return result["addresses"]
+}
+
+export async function getAidropScoreThreshold(client, airdropContractAddr) {
+    let result = await smartContractQueryRPC(client, airdropContractAddr, constructQueryAirdropInfo())
+    return result["threshold_score"]
+}
+
+export async function getAidropAmount(client, airdropContractAddr) {
+    let result = await smartContractQueryRPC(client, airdropContractAddr, constructQueryAirdropInfo())
+    let amountInHid = result["airdrop_amount"] / 1000000
+    return amountInHid.toFixed(1)
 }

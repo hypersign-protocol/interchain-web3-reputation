@@ -1,4 +1,4 @@
-import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+import { SigningCosmWasmClient, CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { base58btc } from "multiformats/bases/base58"
 
 export async function getPublicKeyMultibase(chainId) {
@@ -20,6 +20,12 @@ export async function createClient(rpcUrl, offlineSigner) {
     )
 
     //;(await client).queryContractSmart()
+    return client
+}
+
+export async function createNonSigningClient(rpcUrl) {
+    const client = CosmWasmClient.connect(rpcUrl)
+
     return client
 }
 
@@ -57,6 +63,18 @@ export function constructQueryEligibilityAirdrop(address, reputationContractAddr
 export function constructQueryAirdropFunds() {
     return {
         "get_contract_balance": {}
+    }
+}
+
+export function constructQueryAirdroppedAddresses() {
+    return {
+        "airdropped_addresses": {}
+    }
+}
+
+export function constructQueryAirdropInfo() {
+    return {
+        "airdrop_info": {}
     }
 }
 
