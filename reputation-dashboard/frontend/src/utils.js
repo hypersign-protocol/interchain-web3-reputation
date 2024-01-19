@@ -1,5 +1,8 @@
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+import { SigningStargateClient } from '@cosmjs/stargate'
 import { base58btc } from "multiformats/bases/base58"
+import { Registry } from "@cosmjs/proto-signing"
+import { MsgRegisterDID } from './generated/tx'
 
 export async function getPublicKeyMultibase(chainId) {
     const doc = await window.keplr.getKey(chainId)
@@ -11,6 +14,19 @@ export async function getUserAddressFromOfflineSigner(offlineSigner) {
   const accounts = await offlineSigner.getAccounts();
   const userAddress = accounts[0].address;
   return userAddress
+}
+
+export async function createStargateClient(rpcUrl, offlineSigner) {
+    const registry = new Registry()
+    const typeUrl = "/hypersign.ssi.v1.MsgRegisterDID";
+    registry.register(typeUrl, MsgRegisterDID)
+    const client = SigningStargateClient.connectWithSigner(
+        rpcUrl,
+        offlineSigner,
+        { registry: registry}
+    )
+
+    return client
 }
 
 export async function createClient(rpcUrl, offlineSigner) {

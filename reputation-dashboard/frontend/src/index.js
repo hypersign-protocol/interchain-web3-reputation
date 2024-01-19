@@ -1,21 +1,25 @@
 import { supportedChains } from './chains';
-import { 
-  getUserAddressFromOfflineSigner, 
+import {
+  getUserAddressFromOfflineSigner,
   createClient,
   constructNFTMintMsg,
   constructQueryNFTTokensMsg,
   constructExecuteNFTTransfer,
   getPublicKeyMultibase,
-  constructQueryReputationScore
+  constructQueryReputationScore,
+  createStargateClient
 } from './utils';
-import { 
-  smartContractExecuteRPC, 
+
+import {
+  smartContractExecuteRPC,
   smartContractQueryRPC,
-  smartContractCodeInstantiateRPC 
+  smartContractCodeInstantiateRPC
 } from './smartContract';
 import { buildTable, getNFTTokensData, getContractMetadata, populateActivities } from './elements';
 import "./styles/style.css";
 import { getActivities, getActivitiesById, getActivity1, getActivity2, getScore, performActivity } from './score';
+import { generateAndSignDidDocument, setDidDocument } from './ssi/document';
+import { checkIfDidExists, registerDIDCreateTransaction } from './ssi/rpc';
 
 // Load Osmosis Chain Config
 // TODO: Make it dynamic using a drop down
@@ -24,6 +28,7 @@ const chain = "hypersignLocalnet"
 const chainConfig = supportedChains[chain];
 const chainId = chainConfig["chainId"];
 const chainRPC = chainConfig["rpc"]
+const chainREST = chainConfig["rest"]
 const chainCoinDenom = chainConfig["feeCurrencies"][0]["coinMinimalDenom"]
 
 // Define HTML elements
@@ -31,12 +36,16 @@ let walletDidIdSpan = document.getElementById("keplrDidId");
 let walletConnectButton = document.getElementById("WalletLogin");
 let scoreRefreshBtn = document.getElementById("scoreRefreshBtn");
 let cardParent = document.getElementById("cardParent");
+let registerDidBtn = document.getElementById("registerDidBtn");
 
 // Global vars (Keplr)
 let didId = ""
 let offlineSigner = ""; // Keplr Signer
 let signingClient = null;
 let userAddress = "";
+let stargateSigningClient = null;
+let namespace = "devnet"
+let pubKeyMultibase = ""
 
 // Score
 let didScore = document.getElementById("didScore");
@@ -54,11 +63,12 @@ const activityManagerContractAddress = process.env.ACTIVITY_MANAGER_CONTRACT_ADD
 // Load the address upon connecting the wallet
 // and enable the input field to enter Smart Contract
 walletConnectButton.onclick = async () => {
-  if (walletConnectButton.textContent.includes("Disconnect")) { 
+  if (walletConnectButton.textContent.includes("Disconnect")) {
+    // Change Keplr Button to Connect
     walletConnectButton.classList.remove("btn-secondary");
     walletConnectButton.classList.add("btn-primary");
     walletConnectButton.innerHTML = '<i class="fas fa-sync" id="icon-keplr"></i> Connect Keplr';
-    
+
     // Remove offline signer and address
     offlineSigner = null
     userAddress = ""
@@ -66,6 +76,7 @@ walletConnectButton.onclick = async () => {
     didScore.innerText = 0
     walletDidIdSpan.innerText = ""
     didId = ""
+    pubKeyMultibase = ""
 
     return
   } else {
@@ -75,13 +86,45 @@ walletConnectButton.onclick = async () => {
       if (window.keplr.experimentalSuggestChain) {
         try {
           await window.keplr.experimentalSuggestChain(
-              chainConfig
+            chainConfig
           );
+          
+          await window.keplr.enable(chainId);
+          offlineSigner = window.getOfflineSigner(chainId)
+          userAddress = await getUserAddressFromOfflineSigner(offlineSigner);
+          console.log("User Address: ", userAddress)
+          signingClient = await createClient(chainRPC, offlineSigner);
+          stargateSigningClient = await createStargateClient(chainRPC, offlineSigner);
 
-          walletConnectButton.innerHTML = '<i class="fas fa-times" id="icon-keplr"></i> Disconnect';
-          walletConnectButton.classList.remove("btn-primary");
-          walletConnectButton.classList.add("btn-secondary");
-        } catch {
+          // Create DID Id
+          pubKeyMultibase = await getPublicKeyMultibase(chainId)
+          didId = "did:hid:" + namespace + ":" + pubKeyMultibase;
+          
+          let ifDidExists = await checkIfDidExists(chainREST, didId)
+          if (!ifDidExists) {
+            setDidDocument(document.getElementById("didDocArea"), pubKeyMultibase, userAddress, namespace)
+            $('#customModal').modal('show');
+          } else {
+            walletDidIdSpan.innerText = didId
+
+            // Activities
+            activities = await getActivities(signingClient, activityManagerContractAddress)
+            activitiesByDidId = await getActivitiesById(signingClient, activityManagerContractAddress, didId)
+
+            activityIdx = populateActivities(cardParent, activities, activitiesByDidId)
+
+            // Get Score
+            didScore.innerText = await getScore(signingClient, reputationEngineContractAddress, didId, activityManagerContractAddress)
+
+           // Change Keplr Button to Disconnect
+            walletConnectButton.innerHTML = '<i class="fas fa-times" id="icon-keplr"></i> Disconnect';
+            walletConnectButton.classList.remove("btn-primary");
+            walletConnectButton.classList.add("btn-secondary");
+            
+          }
+
+        } catch (err) {
+          console.log(err)
           alert("Failed to suggest the chain");
           return
         }
@@ -91,31 +134,35 @@ walletConnectButton.onclick = async () => {
       }
     }
   }
-  
-  // Get the wallet address
-  await window.keplr.enable(chainId);
-  offlineSigner = window.getOfflineSigner(chainId)
-  userAddress = await getUserAddressFromOfflineSigner(offlineSigner);
-  console.log("User Address: ", userAddress)
-  signingClient = await createClient(chainRPC, offlineSigner);
-
-  // Append the didId
-  let pubKeyMultibase = await getPublicKeyMultibase(chainId)
-  didId = "did:hid:devnet:" + pubKeyMultibase;
-  walletDidIdSpan.innerText = didId
-
-  // Activities
-  activities = await getActivities(signingClient, activityManagerContractAddress)
-  activitiesByDidId = await getActivitiesById(signingClient, activityManagerContractAddress, didId)
-
-  activityIdx = populateActivities(cardParent, activities, activitiesByDidId)
-
-  // Get Score
-  didScore.innerText = await getScore(signingClient, reputationEngineContractAddress, didId, activityManagerContractAddress)
-
-  console.log("Wallet address " + userAddress + " is active")
-  console.log("DID Id: ", didId)
 };
+
+registerDidBtn.onclick = async () => {
+  console.log("namespace  : ", namespace)
+  let didDocElems = await generateAndSignDidDocument(pubKeyMultibase, userAddress, namespace, chainId)
+  let res = await registerDIDCreateTransaction(stargateSigningClient, didDocElems, userAddress)
+  console.log(res)
+  if (res["code"] !== 0) {
+    throw new Error("transaction failed: ", res["rawLog"])
+  } else {
+    walletDidIdSpan.innerText = didId
+
+    // Activities
+    activities = await getActivities(signingClient, activityManagerContractAddress)
+    activitiesByDidId = await getActivitiesById(signingClient, activityManagerContractAddress, didId)
+
+    activityIdx = populateActivities(cardParent, activities, activitiesByDidId)
+
+    // Get Score
+    didScore.innerText = await getScore(signingClient, reputationEngineContractAddress, didId, activityManagerContractAddress)
+
+    // Change Keplr Button to Disconnect
+    walletConnectButton.innerHTML = '<i class="fas fa-times" id="icon-keplr"></i> Disconnect';
+    walletConnectButton.classList.remove("btn-primary");
+    walletConnectButton.classList.add("btn-secondary");
+            
+  }
+}
+
 
 // Refresh button to fetch score
 scoreRefreshBtn.onclick = async () => {
