@@ -41,17 +41,62 @@ pub enum QueryMsg {
     Eligibity {
         address: String,
         reputation_contract_address: String,
-    }
+    },
+
+    #[returns(AirdroppedAddressesResponse)]
+    AirdroppedAddresses {},
+
+    #[returns(AirdropInfoResponse)]
+    AirdropInfo {}
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub struct AirdropInfoResponse {
+    pub threshold_score: Uint128,
+    pub airdrop_amount: Uint128
+}
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct GetAirdropStatusResponse {
     pub result: bool // for debugging only
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub struct AirdroppedAddressesResponse {
+    pub addresses: Vec<String>
+}
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct EligibityResponse {
     pub result: bool // for debugging only
+}
+
+
+// External (Todo: Remove it once they are made dependencies)
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum ExternalMsg {
+    QueryScoreByAddress {
+        user_address: String
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub struct QueryScoreResponse {
+    pub user_did: String,
+    pub score: Uint128,
+    pub score_breakdown: ScoreDetails
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub struct ScoreDetails {
+    pub activities: Vec<Activity>
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub struct Activity {
+    pub id: String,
+    pub name: String,
+    pub score: Uint128,
 }

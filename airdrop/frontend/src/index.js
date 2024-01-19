@@ -1,10 +1,12 @@
 import "./styles/style.css";
 import { supportedChains } from './chains';
-import { checkAirdropDone, checkAirdropFundInHID, checkEligibility, claimAirdrop, getScore } from './score';
+import { checkAirdropDone, checkAirdropFundInHID, checkEligibility, claimAirdrop, getAddressList, getAidropAmount as getAirdropAmount, getScore } from './score';
 import {
     getUserAddressFromOfflineSigner,
     createClient,
+    createNonSigningClient,
 } from './utils';
+import { buildTable } from "./table";
 // Chain Config
 const chain = "hypersignLocalnet"
 
@@ -20,20 +22,34 @@ let scoreRefreshBtn = document.getElementById("scoreRefreshBtn");
 let claimBtn = document.getElementById("claimBtn");
 let walletAddressInputText = document.getElementById("walletAddressInput")
 let airdropFunds = document.getElementById("funds")
+let addressTable = document.getElementById("airdropped-addresses");
 
 // Global vars (Keplr)
 let didId = ""
 let offlineSigner = ""; // Keplr Signer
 let signingClient = null;
+let normalClient = null;
 let userAddress = "";
 let funds = 0;
+let addressLists = []
+let airdropAmount = ""
 
-// Score
-let didScore = document.getElementById("didScore");
+const reputationEngineContractAddress =  process.env.REPUTATION_ENGINE_CONTRACT_ADDRESS;
+const airdropContractAddress =  process.env.AIRDROP_CONTRACT_ADDRESS;
 
-const reputationEngineContractAddress = "hid1ver9t425fhvgwjmupfr4wzmn6df97lszldwlekslkky64v4wwptqudpyxj";
-const airdropContractAddress = "hid1w30ww5u873s2htxtsq72upfd03cvq0axn33ry67sq5gyymcz7l7squt26c";
+window.onload = async () => {
+    normalClient = await createNonSigningClient(chainRPC)
 
+    // Display Funds
+    document.getElementById("airdrop-pool-card").style.display = 'block';
+    funds = await checkAirdropFundInHID(normalClient, airdropContractAddress)
+    airdropFunds.innerText = funds
+
+    // Display Table
+    airdropAmount = await getAirdropAmount(normalClient, airdropContractAddress)
+    addressLists = await getAddressList(normalClient, airdropContractAddress)
+    buildTable(addressTable, addressLists, airdropAmount)
+}
 
 // Load the address upon connecting the wallet
 // and enable the input field to enter Smart Contract
@@ -86,12 +102,7 @@ walletConnectButton.onclick = async () => {
 
     console.log("User Address: ", userAddress)
     signingClient = await createClient(chainRPC, offlineSigner);
-    
-    // Display Funds
-    document.getElementById("airdrop-pool-card").style.display = 'block';
-    funds = await checkAirdropFundInHID(signingClient, airdropContractAddress)
-    airdropFunds.innerText = funds
-
+   
     console.log("Wallet address " + userAddress + " is active")
 };
 
@@ -115,7 +126,14 @@ claimBtn.onclick = async () => {
     }
 
     errorToast.innerHTML = ""
-    await claimAirdrop(signingClient, userAddress, userAddress, reputationEngineContractAddress, airdropContractAddress)
+    try {
+        await claimAirdrop(signingClient, userAddress, userAddress, reputationEngineContractAddress, airdropContractAddress)
+        airdropAmount = await getAirdropAmount(normalClient, airdropContractAddress)
+        addressLists = await getAddressList(normalClient, airdropContractAddress)
+        buildTable(addressTable, addressLists, airdropAmount)
+    } catch(err) {
+        throw new Error(err)
+    }
 
     funds = await checkAirdropFundInHID(signingClient, airdropContractAddress)
     airdropFunds.innerText = funds

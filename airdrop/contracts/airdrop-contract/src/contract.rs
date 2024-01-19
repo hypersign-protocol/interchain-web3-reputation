@@ -6,7 +6,7 @@ use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult,
 use crate::error::ContractError;
 use crate::execute::execute_claim_airdrop;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
-use crate::query::{query_contract_balance, query_airdrop_status_for_address, query_airdrop_eligibility};
+use crate::query::{query_contract_balance, query_airdrop_status_for_address, query_airdrop_eligibility, query_airdrop_addresses, query_airdrop_info};
 use crate::state::{AIRDROP_CONFIG, AirdropConfig};
 
 /*
@@ -77,6 +77,12 @@ pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
         ),
         QueryMsg::Eligibity { address, reputation_contract_address } => to_json_binary(
             &query_airdrop_eligibility(deps, address, reputation_contract_address)?
+        ),
+        QueryMsg::AirdroppedAddresses {  } => to_json_binary(
+            &query_airdrop_addresses(deps)?   
+        ),
+        QueryMsg::AirdropInfo {  } => to_json_binary(
+            &query_airdrop_info(deps)?
         )
     }
 }
