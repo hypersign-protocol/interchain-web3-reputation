@@ -10,7 +10,8 @@ pub fn query_activities(deps: Deps) -> StdResult<ActivitiesResponse> {
             Ok(Activity {
                 id: activity.id,
                 name: activity.name,
-                score: activity.score
+                score: activity.score,
+                status: activity.status
             })
         })
         .collect::<StdResult<Vec<Activity>>>()?;

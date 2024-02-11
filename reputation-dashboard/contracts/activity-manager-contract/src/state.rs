@@ -8,6 +8,14 @@ pub struct Activity {
     pub id: String,
     pub name: String,
     pub score: Uint128,
+    pub status: ActivityStatus
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub enum ActivityStatus {
+    Registered,
+    Done,
+    Pending
 }
 
 // id: Activity

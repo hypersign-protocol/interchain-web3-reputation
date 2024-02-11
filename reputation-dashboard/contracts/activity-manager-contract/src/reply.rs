@@ -1,12 +1,13 @@
 use cosmwasm_std::{DepsMut, Reply, StdResult, Response, StdError, Event};
 
-use crate::{state::{ACTIVITIES, Activity, DID_ACTIVITY_MAP}, msg::{ActivityQuery, ScoreResponse, NameResponse}, query::query_activity};
+use crate::{msg::{ActivityQuery, NameResponse, ScoreResponse}, query::query_activity, state::{Activity, ActivityStatus, ACTIVITIES, DID_ACTIVITY_MAP}};
 
 // Reply ID for RegisterActivity
 pub const REGISTER_ACTIVITY_REPLY_ID: u64 = 1; 
 
 // Reply ID for PerformActivity
 pub const PERFORM_ACTIVITY_REPLY_ID: u64 = 2;
+
 
 pub fn reply_register_activity(deps: DepsMut, msg: Reply) -> StdResult<Response> {
     // Callback from RegisterActivity function to check if the Activity Contract
@@ -56,6 +57,7 @@ pub fn reply_register_activity(deps: DepsMut, msg: Reply) -> StdResult<Response>
         id: id.clone(),
         name: activity_name,
         score: activity_score,
+        status: ActivityStatus::Registered
     };
     
     ACTIVITIES.save(deps.storage, id.clone(), &activity)?;
@@ -99,6 +101,33 @@ pub fn reply_perform_activity(deps: DepsMut, msg: Reply) -> StdResult<Response> 
 
 fn get_attribute_value<'a>(event: &'a Event, key: &str) -> Option<&'a String> {
     event.attributes.iter().find(|attr| attr.key == key).map(|attr| &attr.value)
+}
+
+pub fn update_activity_for_did_id(deps: DepsMut, did_id: &str, activity: Activity, status: ActivityStatus) -> Result<(), StdError> {
+    let activity_list = match DID_ACTIVITY_MAP.load(deps.as_ref().storage, did_id.to_string()) {
+        Ok(mut activities) => {
+            // Return an error if the activity is already registered
+            for act in activities.iter_mut() {
+                if act.id.eq(&activity.id) && status.eq(&ActivityStatus::Done) {
+                    act.status = status.clone()
+                } else {
+                    return Err(StdError::generic_err("existing async activity status can only be changed to Done"))
+                }
+            }
+            activities            
+        },
+        Err(_) => {
+            if status.eq(&ActivityStatus::Pending) {
+                let mut nw_activity = activity;
+                nw_activity.status = ActivityStatus::Pending;
+                vec![nw_activity]
+            } else {
+                return Err(StdError::generic_err("new async activity can only be set to Pending status"))
+            }
+        },
+    };
+
+    DID_ACTIVITY_MAP.save(deps.storage, did_id.to_string(), &activity_list)
 }
 
 fn push_activity_for_did_id(deps: DepsMut, did_id: &str, activity: Activity) -> Result<(), StdError> {

@@ -6,7 +6,7 @@ use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult,
 use crate::error::ContractError;
 use crate::execute::execute_verify_activity;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
-use crate::query::{query_name, query_score, query_did};
+use crate::query::{query_check_activity, query_did, query_name, query_score};
 use crate::state::{ActivityInfo, ACTIVITY_INFO};
 
 /*
@@ -25,7 +25,6 @@ pub fn instantiate(
     let activity_info = ActivityInfo {
         name: msg.name,
         score: msg.score,
-        threshold_balance: msg.threshold_balance
     };
      
     ACTIVITY_INFO.save(deps.storage, &activity_info)?;
@@ -53,8 +52,7 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::Name {  } => to_json_binary(&query_name(deps)?),
         QueryMsg::Score {  } => to_json_binary(&query_score(deps)?),
-        // Implement a QueryActivityStatus - checks if an activity is done or not (only)
-        QueryMsg::Did { did_id } => to_json_binary(&query_did(deps, did_id)?)
+        QueryMsg::CheckActivity { activity_params } => to_json_binary(&query_check_activity(deps, activity_params)?)
     }
 }
 

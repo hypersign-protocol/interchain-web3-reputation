@@ -1,9 +1,8 @@
-use cosmwasm_std::{Response, DepsMut, Event, Env, Binary, from_json, StdError, Uint128, Deps};
+use cosmwasm_std::{from_json, to_json_binary, Binary, Deps, DepsMut, Env, Event, IbcMsg, IbcTimeout, Response, StdError, Uint128};
 
-use crate::{ContractError, state::{ActivityParams, ACTIVITY_INFO, ACTIVITY_MAP}, ssi::get_blockchain_address};
+use crate::{msg::IbcQueryMsg, ssi::get_blockchain_address, state::{ActivityParams, ACTIVITY_INFO, ACTIVITY_MAP}, ContractError};
 use crate::ssi::query_did_doc;
 
-// state: (wallet address <> LP provided yes or no?)
 
 pub fn execute_verify_activity(deps: DepsMut, env: Env, activity_params: Binary, register_verify: bool) -> Result<Response, ContractError> {
     // If the following is true, it means that the Activity Manger contract wants to test
@@ -22,6 +21,8 @@ pub fn execute_verify_activity(deps: DepsMut, env: Env, activity_params: Binary,
 
         // Extract Params
         let did_id = params.did_id;
+        let ibc_channel = params.ibc_channel;
+        let pool_id = params.pool_id;
 
          // Fetch DID Id using x/ssi hooks
         let did_doc = query_did_doc(deps.as_ref(), &did_id)
@@ -29,27 +30,17 @@ pub fn execute_verify_activity(deps: DepsMut, env: Env, activity_params: Binary,
             ContractError::Std(StdError::not_found(format!("DID Document '{}' not found", did_id)))
         })?;
 
-
         let wallet_address = get_blockchain_address(&did_doc);
-        let denom: &str = "uhid";
-        let min_balance_threshold: Uint128 = get_threshold(deps.as_ref());
-        let wallet_address_balance = deps.querier.query_balance(wallet_address, denom)?;
 
-        if wallet_address_balance.amount.lt(&min_balance_threshold) {
-            return Err(ContractError::Std(StdError::generic_err("criteria for activity not met")))
-        } else {
-            ACTIVITY_MAP.save(deps.storage, did_id.clone(), &true)?;
-            Ok(Response::new()
-                .add_attribute("activity_performed_contract_addr", env.contract.address)
-                .add_attribute("activity_performed_did_id", did_id.clone())
-            )
-        }
+        Ok(Response::new()
+            .add_attribute("channel", ibc_channel.clone())
+            .add_message(IbcMsg::SendPacket { 
+                channel_id: ibc_channel.clone(), 
+                data: to_json_binary(&IbcQueryMsg::Verify { wallet_address, pool_id, did_id })?, 
+                timeout: IbcTimeout::with_timestamp(env.block.time.plus_seconds(120))
+            }
+        ))
     }
     
 }
 
-
-fn get_threshold(deps: Deps) -> Uint128 {
-    let activity_info = ACTIVITY_INFO.load(deps.storage).unwrap();
-    activity_info.threshold_balance
-}

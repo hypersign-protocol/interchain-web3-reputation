@@ -2,7 +2,7 @@ use std::ops::Add;
 
 use cosmwasm_std::{Deps, StdResult, Uint128};
 
-use crate::{msg::{QueryScoreResponse, ActivitiesByDidIdResponse, ExternalQuery, ActivityByIdResponse, Activity, ScoreDetails, DidIdByAddressResponse}, state::CONFIG};
+use crate::{msg::{ActivitiesByDidIdResponse, Activity, ActivityByIdResponse, ActivityStatus, DidIdByAddressResponse, ExternalQuery, QueryScoreResponse, ScoreDetails}, state::CONFIG};
 
 pub fn query_score_by_address(deps: Deps, user_address: String) -> StdResult<QueryScoreResponse> {
     // Get Activity Manager Contract address
@@ -60,21 +60,24 @@ pub fn query_score_by_did_id(deps: Deps, did_id: String) -> StdResult<QueryScore
     let mut final_score: Uint128 = Uint128::new(0);
 
     for activity in activities.iter() {
-        let activity_id = &activity.id;
+        if activity.status.eq(&ActivityStatus::Done) {
 
-        let response: StdResult<ActivityByIdResponse> = match deps.querier.query_wasm_smart(
-            activity_manager_contract_addr.clone(),
-            &ExternalQuery::Activity { id: activity_id.into() }
-        ) {
-            Err(err) => {
-                return Err(err);
-            },
-            Ok(r) => Ok(r)
-        };
-        
-        let act = response.unwrap().activity;
-        activity_obj_list.push(act.clone());
-        final_score = final_score.add(act.score);
+            let activity_id = &activity.id;
+    
+            let response: StdResult<ActivityByIdResponse> = match deps.querier.query_wasm_smart(
+                activity_manager_contract_addr.clone(),
+                &ExternalQuery::Activity { id: activity_id.into() }
+            ) {
+                Err(err) => {
+                    return Err(err);
+                },
+                Ok(r) => Ok(r)
+            };
+            
+            let act = response.unwrap().activity;
+            activity_obj_list.push(act.clone());
+            final_score = final_score.add(act.score);
+        }
     }
 
     Ok(QueryScoreResponse { 
