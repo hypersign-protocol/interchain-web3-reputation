@@ -4,10 +4,9 @@ use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult,
 // use cw2::set_contract_version;
 
 use crate::error::ContractError;
-use crate::execute::{execute_perform_activity, execute_perform_async_activity, execute_register_activity};
+use crate::execute::execute_register_activity;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
 use crate::query::{query_activities, query_activities_by_did_id, query_activity};
-use crate::reply::{reply_perform_activity, reply_register_activity, PERFORM_ACTIVITY_REPLY_ID, REGISTER_ACTIVITY_REPLY_ID};
 use crate::ssi::query_did_id_from_address;
 
 /*
@@ -34,18 +33,7 @@ pub fn execute(
     msg: ExecuteMsg,
 ) -> Result<Response, ContractError> {
     match msg {
-        ExecuteMsg::RegisterActivity { contract_address } => execute_register_activity(contract_address),
-        ExecuteMsg::PerformActivity { activity_id, activity_params } => execute_perform_activity(deps.as_ref(), activity_id, activity_params),
-        ExecuteMsg::PerformAsyncActivity { activity_id, did_id, activity_params, check_status } => execute_perform_async_activity(deps, activity_id, did_id, activity_params, check_status)
-    }
-}
-
-#[cfg_attr(not(feature = "library"), entry_point)]
-pub fn reply(deps: DepsMut, _env: Env, msg: Reply) -> StdResult<Response> {
-    match msg.id {
-        REGISTER_ACTIVITY_REPLY_ID => reply_register_activity(deps, msg),
-        PERFORM_ACTIVITY_REPLY_ID => reply_perform_activity(deps, msg),
-        _ => Err(StdError::generic_err(format!("unexpected reply id: {}", msg.id)))
+        ExecuteMsg::RegisterActivity { contract_address } => execute_register_activity(deps, contract_address)
     }
 }
 

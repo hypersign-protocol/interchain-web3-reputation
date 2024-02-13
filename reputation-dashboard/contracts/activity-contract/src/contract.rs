@@ -4,7 +4,7 @@ use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult,
 // use cw2::set_contract_version;
 
 use crate::error::ContractError;
-use crate::execute::execute_verify_activity;
+use crate::execute::execute_perform_activity;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
 use crate::query::{query_name, query_score, query_did};
 use crate::state::{ActivityInfo, ACTIVITY_INFO};
@@ -44,7 +44,7 @@ pub fn execute(
     msg: ExecuteMsg,
 ) -> Result<Response, ContractError> {
     match msg {
-        ExecuteMsg::VerifyActivity { activity_params, register_verify } => execute_verify_activity(deps, env, activity_params, register_verify)
+        ExecuteMsg::PerformActivity { did_id } => execute_perform_activity(deps, env, did_id)
     }
 }
 
@@ -53,6 +53,7 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::Name {  } => to_json_binary(&query_name(deps)?),
         QueryMsg::Score {  } => to_json_binary(&query_score(deps)?),
+        QueryMsg::CheckActivityStatus { did_id } => todo!(),
         // Implement a QueryActivityStatus - checks if an activity is done or not (only)
         QueryMsg::Did { did_id } => to_json_binary(&query_did(deps, did_id)?)
     }

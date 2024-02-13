@@ -68,20 +68,16 @@ export function constructQueryReputationScore(didId, activity_contract) {
     }
 }
 
-export function constructExecutePerformActivity(activityId, didId) {
-    let activityParams = btoa(JSON.stringify(
-        {
-            "did_id": didId
-        }
-    ))
-
+export function constructExecutePerformOsmosisActivity(poolId, didId, ibcChannel) {
     return  {
         "perform_activity": {
-            "activity_id": activityId,
-            "activity_params": activityParams
+            "pool_id": poolId,
+            "did_id": didId,
+            "ibc_channel": ibcChannel
         }
     }
 }
+
 
 export function findAlreadyDoneActivities(activityList, activity) {
     for (var i = 0; i < activityList.length; i++) {

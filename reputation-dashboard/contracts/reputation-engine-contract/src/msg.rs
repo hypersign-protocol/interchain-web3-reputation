@@ -43,15 +43,7 @@ pub struct ScoreDetails {
 pub struct Activity {
     pub id: String,
     pub name: String,
-    pub score: Uint128,
-    pub status: ActivityStatus
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
-pub enum ActivityStatus {
-    Registered,
-    Done,
-    Pending
+    pub score: Uint128
 }
 
 //  ---------------- External Contract ---------------- //

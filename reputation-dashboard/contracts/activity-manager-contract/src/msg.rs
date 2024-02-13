@@ -13,16 +13,6 @@ pub enum ExecuteMsg {
     RegisterActivity {
         contract_address: String
     },
-    PerformActivity {
-        activity_id: String,
-        activity_params: Binary
-    },
-    PerformAsyncActivity {
-        activity_id: String,
-        did_id: String,
-        activity_params: Binary,
-        check_status: bool
-    }
 }
 
 #[cw_serde]
@@ -66,22 +56,19 @@ pub struct ActivityResponse {
 // ---------- External ----------------- //
 
 #[cw_serde]
-pub enum ActivityMsg {
-    VerifyActivity {
-        activity_params: Binary,
-        register_verify: bool
-    }
-}
-
-#[cw_serde]
 pub enum ActivityQuery {
     Name {},
     Score {},
-    // It is mostly for async activities
-    CheckActivity{
-        activity_params: Binary
+    CheckActivityStatus{
+        did_id: String
     },
 }
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub struct CheckActivityStatusResponse {
+    pub is_activity_completed: bool
+}
+
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct NameResponse {

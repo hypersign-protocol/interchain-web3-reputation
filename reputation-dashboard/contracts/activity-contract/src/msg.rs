@@ -13,12 +13,8 @@ pub struct InstantiateMsg {
 
 #[cw_serde]
 pub enum ExecuteMsg {
-    VerifyActivity {
-        activity_params: Binary,
-        // flag which indicates that the counterparty contract
-        // is trying to verify if this function is implemented.
-        // If true, it will skip the core logic which verifies the activity
-        register_verify: bool
+    PerformActivity {
+        did_id: String
     }
 }
 
@@ -31,6 +27,11 @@ pub enum QueryMsg {
     #[returns(ScoreResponse)]
     Score {},
     
+    #[returns(CheckActivityStatusResponse)]
+    CheckActivityStatus{
+        did_id: String
+    },
+
     // For debugging
     #[returns(DidResponse)]
     Did {
@@ -47,6 +48,11 @@ pub struct NameResponse {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct ScoreResponse {
     pub activity_score: Uint128
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub struct CheckActivityStatusResponse {
+    pub is_activity_completed: bool
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]

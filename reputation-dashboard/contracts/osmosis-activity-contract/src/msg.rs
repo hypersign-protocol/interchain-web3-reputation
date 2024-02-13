@@ -7,18 +7,15 @@ use serde::{Deserialize, Serialize};
 #[cw_serde]
 pub struct InstantiateMsg {
     pub name: String,
-    pub score: Uint128,
-    pub threshold_balance: Uint128
+    pub score: Uint128
 }
 
 #[cw_serde]
 pub enum ExecuteMsg {
-    VerifyActivity {
-        activity_params: Binary,
-        // flag which indicates that the counterparty contract
-        // is trying to verify if this function is implemented.
-        // If true, it will skip the core logic which verifies the activity
-        register_verify: bool
+    PerformActivity {
+      pool_id: u64,
+      did_id: String,
+      ibc_channel: String, 
     }
 }
 
@@ -40,10 +37,10 @@ pub enum QueryMsg {
     #[returns(ScoreResponse)]
     Score {},
 
-    #[returns(CheckActivityResponse)]
-    CheckActivity {
-        activity_params: Binary,
-    }   
+    #[returns(CheckActivityStatusResponse)]
+    CheckActivityStatus{
+        did_id: String
+    },
 }
 
 
@@ -58,6 +55,6 @@ pub struct ScoreResponse {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
-pub struct CheckActivityResponse {
-    pub result: bool
+pub struct CheckActivityStatusResponse {
+    pub is_activity_completed: bool
 }

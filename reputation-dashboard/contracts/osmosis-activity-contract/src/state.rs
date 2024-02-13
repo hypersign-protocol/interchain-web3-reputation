@@ -9,12 +9,6 @@ pub struct ActivityInfo {
     pub score: Uint128,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
-pub struct ActivityParams {
-    pub pool_id: u64,
-    pub did_id: String,
-    pub ibc_channel: String, // For IBC 
-}
 
 pub const ACTIVITY_INFO: Item<ActivityInfo> = Item::new("activity_info");
 

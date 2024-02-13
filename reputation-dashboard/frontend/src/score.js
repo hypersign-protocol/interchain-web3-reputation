@@ -1,5 +1,12 @@
 import { smartContractExecuteRPC, smartContractQueryRPC } from "./smartContract";
-import { constructExecutePerformActivity, constructQueryActivities, constructQueryActivitiesByDidId, constructQueryReputationScore } from "./utils";
+import { 
+    constructExecutePerformActivity, 
+    constructQueryActivities, 
+    constructQueryActivitiesByDidId, 
+    constructQueryReputationScore,
+    constructExecutePerformAsyncActivity,
+    constructExecutePerformOsmosisActivity
+} from "./utils";
 
 /**
    {
@@ -47,10 +54,9 @@ export async function getActivitiesById (client, activityManagerContract, didId)
     return result["activities"]
 }
 
-
-export async function performActivity(client, author, activityManagerContractAddr, didId, activityId) {
+export async function performOsmosisActivity(client, author, activityContractAddr, didId, poolId, ibcChannel) {
     try {
-        await smartContractExecuteRPC(client, author, activityManagerContractAddr, constructExecutePerformActivity(activityId, didId))
+        await smartContractExecuteRPC(client, author, activityContractAddr, constructExecutePerformOsmosisActivity(poolId, didId, ibcChannel))
     } catch (error) {
         throw new Error("unable to perform activity: ", activityId)
     }

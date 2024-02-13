@@ -10,11 +10,6 @@ pub struct ActivityInfo {
     pub threshold_balance: Uint128,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
-pub struct ActivityParams {
-    pub did_id: String,
-}
-
 pub const ACTIVITY_INFO: Item<ActivityInfo> = Item::new("activity_info");
 
 pub const ACTIVITY_MAP: Map<String, bool> = Map::new("activity_map");

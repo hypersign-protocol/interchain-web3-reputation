@@ -18,7 +18,7 @@ import {
 } from './smartContract';
 import { buildTable, getNFTTokensData, getContractMetadata, populateActivities } from './elements';
 import "./styles/style.css";
-import { getActivities, getActivitiesById, getActivity1, getActivity2, getScore, performActivity } from './score';
+import { filterCompletedActivities, getActivities, getActivitiesById, getActivity1, getActivity2, getScore, performAsyncActivity, performOsmosisActivity } from './score';
 import { generateAndSignDidDocument, setDidDocument } from './ssi/document';
 import { checkIfDidExists, registerDIDCreateTransaction } from './ssi/rpc';
 
@@ -61,6 +61,7 @@ let activityIdx = null;
 // Contract Addresses
 const reputationEngineContractAddress = process.env.REPUTATION_ENGINE_CONTRACT_ADDRESS;
 const activityManagerContractAddress = process.env.ACTIVITY_MANAGER_CONTRACT_ADDRESS;
+const osmosisActivityContractAddress = process.env.OSMOSIS_ACTIVITY_CONTRACT_ADDRESS;
 
 window.onload = async () => {
   normalClient = await createNonSigningClient(chainRPC)
@@ -193,8 +194,10 @@ cardParent.addEventListener('click', async (event) => {
     const idx = target.dataset.activityIndex;
 
     try {
-      await performActivity(signingClient, userAddress, activityManagerContractAddress, didId, activityIdx[idx]);
-
+      let pool_id = 1;
+      let ibc_channel = "channel-7";
+      await performOsmosisActivity(signingClient, userAddress, osmosisActivityContractAddress, didId, pool_id, ibc_channel)
+      
       target.innerHTML = '<i class="fas fa-check"></i>';
       target.disabled = true;
     } catch (error) {

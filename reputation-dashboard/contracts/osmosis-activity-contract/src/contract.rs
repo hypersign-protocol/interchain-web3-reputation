@@ -4,9 +4,9 @@ use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult,
 // use cw2::set_contract_version;
 
 use crate::error::ContractError;
-use crate::execute::execute_verify_activity;
+use crate::execute::execute_perform_activity;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
-use crate::query::{query_check_activity, query_did, query_name, query_score};
+use crate::query::{query_check_activity_status, query_name, query_score};
 use crate::state::{ActivityInfo, ACTIVITY_INFO};
 
 /*
@@ -43,7 +43,7 @@ pub fn execute(
     msg: ExecuteMsg,
 ) -> Result<Response, ContractError> {
     match msg {
-        ExecuteMsg::VerifyActivity { activity_params, register_verify } => execute_verify_activity(deps, env, activity_params, register_verify)
+        ExecuteMsg::PerformActivity { did_id, pool_id, ibc_channel } => execute_perform_activity(deps, env, did_id, pool_id, ibc_channel)
     }
 }
 
@@ -52,7 +52,7 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::Name {  } => to_json_binary(&query_name(deps)?),
         QueryMsg::Score {  } => to_json_binary(&query_score(deps)?),
-        QueryMsg::CheckActivity { activity_params } => to_json_binary(&query_check_activity(deps, activity_params)?)
+        QueryMsg::CheckActivityStatus { did_id } => to_json_binary(&query_check_activity_status(deps, did_id)?)
     }
 }
 
