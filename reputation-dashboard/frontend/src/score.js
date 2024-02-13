@@ -30,8 +30,7 @@ import {
 */
 export async function getScoreWithBreakdown(client, reputationEngineContractAddr,  did_id, activity_manager_contract) {
     let result = await smartContractQueryRPC(client, reputationEngineContractAddr, constructQueryReputationScore(
-        did_id, 
-        activity_manager_contract
+        did_id
       )
     )
 

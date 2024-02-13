@@ -18,7 +18,7 @@ import {
 } from './smartContract';
 import { buildTable, getNFTTokensData, getContractMetadata, populateActivities } from './elements';
 import "./styles/style.css";
-import { filterCompletedActivities, getActivities, getActivitiesById, getActivity1, getActivity2, getScore, performAsyncActivity, performOsmosisActivity } from './score';
+import { filterCompletedActivities, getActivities, getActivitiesById, getActivity1, getActivity2, getScore, getScoreWithBreakdown, performAsyncActivity, performOsmosisActivity } from './score';
 import { generateAndSignDidDocument, setDidDocument } from './ssi/document';
 import { checkIfDidExists, registerDIDCreateTransaction } from './ssi/rpc';
 
@@ -69,6 +69,8 @@ window.onload = async () => {
   // Display all Activities
   activities = await getActivities(normalClient, activityManagerContractAddress)
   activityIdx = populateActivities(cardParent, activities, activitiesByDidId)
+
+  
 }
 
 // Load the address upon connecting the wallet
@@ -195,13 +197,65 @@ cardParent.addEventListener('click', async (event) => {
 
     try {
       let pool_id = 1;
-      let ibc_channel = "channel-7";
-      await performOsmosisActivity(signingClient, userAddress, osmosisActivityContractAddress, didId, pool_id, ibc_channel)
+      let ibc_channel = "channel-9";
+      await performOsmosisActivity(signingClient, userAddress, activityIdx[idx], didId, pool_id, ibc_channel)
       
-      target.innerHTML = '<i class="fas fa-check"></i>';
-      target.disabled = true;
+    } catch (error) {
+      alert(error)
+      return
+    }
+
+    target.innerText = "Pending"
+    target.disabled = true
+  }
+})
+
+function getVerifyButtonElementForActivityIdx(idx) {
+  let verifyBtns = document.getElementsByClassName("activity-verify-btn")
+  for (let i = 0; i < verifyBtns.length; i++) {
+    if (verifyBtns[i].dataset.activityIndex == idx) {
+      verifyBtns[i].innerHTML = '<i class="fas fa-check"></i>';
+      verifyBtns[i].disabled = true;
+      return
+    }
+  }
+}
+
+// Add event to all verify buttons
+cardParent.addEventListener('click', async (event) => {
+  const target = event.target;
+
+  if (target.classList.contains('activity-reload-btn')) {
+    const idx = target.dataset.activityIndex;
+
+    try {
+      let scoreComplete = await getScoreWithBreakdown(signingClient, reputationEngineContractAddress, didId, "")
+      let activitiesDoneByDidId = scoreComplete["score_breakdown"]["activities"]
+      
+      if (checkActivityDoneAfterReload(activitiesDoneByDidId, activityIdx[idx])) {
+        getVerifyButtonElementForActivityIdx(idx)
+        target.style.display = 'none'
+        didScore.innerText = await getScore(signingClient, reputationEngineContractAddress, didId, activityManagerContractAddress)
+        return
+      } else {
+        // add alert
+        alert("Activity has not been completed")
+      }
+
     } catch (error) {
       alert(error)
     }
   }
 })
+
+
+// check if particular activity is done
+function checkActivityDoneAfterReload(activitiesDoneByDidId, activityIdToSearch) {
+  for (let i = 0; i < activitiesDoneByDidId.length; i++) {
+    if (activityIdToSearch === activitiesDoneByDidId[i]["id"]) {
+      return true
+    }
+  }
+
+  return false
+}

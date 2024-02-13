@@ -60,7 +60,7 @@ export function constructQueryActivitiesByDidId(didId) {
     }
 }
 
-export function constructQueryReputationScore(didId, activity_contract) {
+export function constructQueryReputationScore(didId) {
     return {
         "query_score_by_did_id": {
             "did_id": didId,

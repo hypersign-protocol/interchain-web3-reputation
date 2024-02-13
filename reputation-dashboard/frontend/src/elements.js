@@ -55,7 +55,8 @@ export function populateActivities(htmlElem, activityList, activitiesAlreadyDone
               <b class="card-title">Score: ${activityList[i]["score"]}</b>
             </div>
             <div class="col-sm-4 text-right">
-              <button class="btn btn-success verify-btn activity-verify-btn" data-activity-index="${activityPos}">Verify</button>
+              <button class="btn btn-success verify-btn activity-verify-btn" data-activity-index="${activityPos}">Execute</button><br><br>
+              <button class="btn btn-success verify-btn activity-reload-btn" data-activity-index="${activityPos}">Reload</button>
             </div>
           </div>
         </div>
