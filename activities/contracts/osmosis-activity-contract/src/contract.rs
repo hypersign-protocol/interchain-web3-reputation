@@ -4,10 +4,10 @@ use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult,
 // use cw2::set_contract_version;
 
 use crate::error::ContractError;
-use crate::execute::execute_perform_activity;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
-use crate::query::{query_check_activity_status, query_name, query_score};
-use crate::state::{ActivityInfo, ACTIVITY_INFO};
+use crate::state::{ActivityInfo, ActivityParams, OsmosisActivityContract, ACTIVITY_INFO};
+
+use activity::{ActivityExecuteMsg, ActivityQueryMsg};
 
 /*
 // version info for migration info
@@ -39,21 +39,15 @@ pub fn instantiate(
 pub fn execute(
     deps: DepsMut,
     env: Env,
-    _info: MessageInfo,
-    msg: ExecuteMsg,
+    info: MessageInfo,
+    msg: ActivityExecuteMsg<ActivityParams>,
 ) -> Result<Response, ContractError> {
-    match msg {
-        ExecuteMsg::PerformActivity { did_id, pool_id, ibc_channel } => execute_perform_activity(deps, env, did_id, pool_id, ibc_channel)
-    }
+    OsmosisActivityContract::default().execute(deps, env, info, msg)
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
-pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
-    match msg {
-        QueryMsg::Name {  } => to_json_binary(&query_name(deps)?),
-        QueryMsg::Score {  } => to_json_binary(&query_score(deps)?),
-        QueryMsg::CheckActivityStatus { did_id } => to_json_binary(&query_check_activity_status(deps, did_id)?)
-    }
+pub fn query(deps: Deps, env: Env, msg: ActivityQueryMsg) -> StdResult<Binary> {
+    OsmosisActivityContract::default().query(deps, env, msg)
 }
 
 #[cfg(test)]

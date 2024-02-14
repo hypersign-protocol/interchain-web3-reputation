@@ -7,4 +7,5 @@ pub mod execute;
 pub mod ssi;
 pub mod ibc;
 
+pub use activity::ActivityExecute;
 pub use crate::error::ContractError;

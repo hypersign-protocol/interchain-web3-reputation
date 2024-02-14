@@ -197,7 +197,7 @@ cardParent.addEventListener('click', async (event) => {
 
     try {
       let pool_id = 1;
-      let ibc_channel = "channel-9";
+      let ibc_channel = "channel-12";
       await performOsmosisActivity(signingClient, userAddress, activityIdx[idx], didId, pool_id, ibc_channel)
       
     } catch (error) {

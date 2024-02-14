@@ -5,7 +5,7 @@ use cosmwasm_std::{
 };
 use crate::error::ContractError;
 use crate::msg::IbcQueryMsg;
-use crate::state::ACTIVITY_MAP;
+use crate::state::OsmosisActivityContract;
 
 pub const IBC_VERSION: &str = "zk-1";
 
@@ -112,7 +112,7 @@ pub fn ibc_packet_ack(
 
 pub fn acknowledge_query(deps: DepsMut, env: Env, ack_result: bool, wallet_address: String, did_id: String) -> Result<IbcBasicResponse, ContractError> {
     if ack_result {
-        ACTIVITY_MAP.save(deps.storage, did_id.clone(), &true)?;
+        OsmosisActivityContract::default().activity_map.save(deps.storage, did_id.clone(), &true)?;
         Ok(IbcBasicResponse::new()
             .add_attribute("method", "ibc_packet_ack")
         )

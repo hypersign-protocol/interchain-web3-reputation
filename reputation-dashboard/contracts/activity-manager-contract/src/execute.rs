@@ -1,4 +1,4 @@
-use cosmwasm_std::{to_json_binary, DepsMut, Response, StdError, StdResult, SubMsg, WasmMsg};
+use cosmwasm_std::{to_json_binary, CustomMsg, DepsMut, Response, StdError, StdResult, SubMsg, WasmMsg};
 
 use crate::{msg::{ActivityQuery, CheckActivityStatusResponse, NameResponse, ScoreResponse}, state::{Activity, ACTIVITIES}, ContractError};
 

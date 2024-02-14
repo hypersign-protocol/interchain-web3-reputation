@@ -56,7 +56,6 @@ pub fn query_score_by_did_id(deps: Deps, did_id: String) -> StdResult<QueryScore
 
     // Calculate score (Just add them up)
     let activities = response.unwrap().activities;
-    let mut activity_obj_list: Vec<Activity> = vec![];
     let mut final_score: Uint128 = Uint128::new(0);
 
     for activity in activities.iter() {
@@ -67,7 +66,7 @@ pub fn query_score_by_did_id(deps: Deps, did_id: String) -> StdResult<QueryScore
         user_did: did_id.clone(),
         score: final_score,
         score_breakdown: ScoreDetails {
-            activities: activity_obj_list
+            activities: activities
         }
     })
 }

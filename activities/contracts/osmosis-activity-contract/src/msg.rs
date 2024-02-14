@@ -44,17 +44,17 @@ pub enum QueryMsg {
 }
 
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[cw_serde]
 pub struct NameResponse {
     pub activity_name: String
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[cw_serde]
 pub struct ScoreResponse {
     pub activity_score: Uint128
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+#[cw_serde]
 pub struct CheckActivityStatusResponse {
     pub is_activity_completed: bool
 }

@@ -71,9 +71,11 @@ export function constructQueryReputationScore(didId) {
 export function constructExecutePerformOsmosisActivity(poolId, didId, ibcChannel) {
     return  {
         "perform_activity": {
-            "pool_id": poolId,
+            "activity_params": {
+                "pool_id": poolId,
+                "ibc_channel": ibcChannel
+            },
             "did_id": didId,
-            "ibc_channel": ibcChannel
         }
     }
 }
