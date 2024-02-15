@@ -18,7 +18,7 @@ import {
 } from './smartContract';
 import { buildTable, getNFTTokensData, getContractMetadata, populateActivities } from './elements';
 import "./styles/style.css";
-import { filterCompletedActivities, getActivities, getActivitiesById, getActivity1, getActivity2, getScore, getScoreWithBreakdown, performAsyncActivity, performOsmosisActivity } from './score';
+import { filterCompletedActivities, getActivities, getActivitiesById, getActivity1, getActivity2, getActivityStatusByDidId, getScore, getScoreWithBreakdown, performAsyncActivity, performOsmosisActivity } from './score';
 import { generateAndSignDidDocument, setDidDocument } from './ssi/document';
 import { checkIfDidExists, registerDIDCreateTransaction } from './ssi/rpc';
 
@@ -39,6 +39,7 @@ let scoreRefreshBtn = document.getElementById("scoreRefreshBtn");
 let cardParent = document.getElementById("cardParent");
 let registerDidBtn = document.getElementById("registerDidBtn");
 let scoreParent = document.getElementById("score-parent");
+let checkIconSpan = document.getElementById("check-icon");
 
 // Global vars (Keplr)
 let didId = ""
@@ -188,25 +189,51 @@ scoreRefreshBtn.onclick = async () => {
   }
 }
 
+async function setExecuteBtnToLoad(target) {
+  target.innerHTML = `
+  <div class="spinner-border text-light" role="status">
+  <span class="sr-only">Loading...</span>
+  </div>
+  `
+  target.disabled = true
+}
+
 // Add event to all verify buttons
 cardParent.addEventListener('click', async (event) => {
   const target = event.target;
 
   if (target.classList.contains('activity-verify-btn')) {
+    if (!confirm("This is a on-chain activity. You will incur gas fee even if the tx fails. Make sure you have already provided liquidity on Osmosis LP pool")) {
+      return
+    }
+
     const idx = target.dataset.activityIndex;
 
     try {
       let pool_id = 1;
-      let ibc_channel = "channel-12";
+      let ibc_channel = "channel-13";
       await performOsmosisActivity(signingClient, userAddress, activityIdx[idx], didId, pool_id, ibc_channel)
       
     } catch (error) {
       alert(error)
       return
-    }
+    } finally {
+      await setExecuteBtnToLoad(target)
+  
+      const interval = setInterval( async () => {
+        let response = await getActivityStatusByDidId(normalClient, activityIdx[idx], didId)
+        if (response) {
+          clearInterval(interval)
+          target.style.display = 'none';
+          
+          let checkIcon = document.getElementById(`check-icon-${idx}`)
+          checkIcon.innerHTML ='<i class="fas fa-check"></i>'
+          checkIcon.previousElementSibling.style.display = 'none';
 
-    target.innerText = "Pending"
-    target.disabled = true
+          didScore.innerText = await getScore(normalClient, reputationEngineContractAddress, didId, activityManagerContractAddress)
+        }
+      }, 2000)
+    }
   }
 })
 
@@ -222,40 +249,40 @@ function getVerifyButtonElementForActivityIdx(idx) {
 }
 
 // Add event to all verify buttons
-cardParent.addEventListener('click', async (event) => {
-  const target = event.target;
+// cardParent.addEventListener('click', async (event) => {
+//   const target = event.target;
 
-  if (target.classList.contains('activity-reload-btn')) {
-    const idx = target.dataset.activityIndex;
+//   if (target.classList.contains('activity-reload-btn')) {
+//     const idx = target.dataset.activityIndex;
 
-    try {
-      let scoreComplete = await getScoreWithBreakdown(signingClient, reputationEngineContractAddress, didId, "")
-      let activitiesDoneByDidId = scoreComplete["score_breakdown"]["activities"]
+//     try {
+//       let scoreComplete = await getScoreWithBreakdown(signingClient, reputationEngineContractAddress, didId, "")
+//       let activitiesDoneByDidId = scoreComplete["score_breakdown"]["activities"]
       
-      if (checkActivityDoneAfterReload(activitiesDoneByDidId, activityIdx[idx])) {
-        getVerifyButtonElementForActivityIdx(idx)
-        target.style.display = 'none'
-        didScore.innerText = await getScore(signingClient, reputationEngineContractAddress, didId, activityManagerContractAddress)
-        return
-      } else {
-        // add alert
-        alert("Activity has not been completed")
-      }
+//       if (checkActivityDoneAfterReload(activitiesDoneByDidId, activityIdx[idx])) {
+//         getVerifyButtonElementForActivityIdx(idx)
+//         target.style.display = 'none'
+//         didScore.innerText = await getScore(signingClient, reputationEngineContractAddress, didId, activityManagerContractAddress)
+//         return
+//       } else {
+//         // add alert
+//         alert("Activity has not been completed")
+//       }
 
-    } catch (error) {
-      alert(error)
-    }
-  }
-})
+//     } catch (error) {
+//       alert(error)
+//     }
+//   }
+// })
 
 
-// check if particular activity is done
-function checkActivityDoneAfterReload(activitiesDoneByDidId, activityIdToSearch) {
-  for (let i = 0; i < activitiesDoneByDidId.length; i++) {
-    if (activityIdToSearch === activitiesDoneByDidId[i]["id"]) {
-      return true
-    }
-  }
+// // check if particular activity is done
+// function checkActivityDoneAfterReload(activitiesDoneByDidId, activityIdToSearch) {
+//   for (let i = 0; i < activitiesDoneByDidId.length; i++) {
+//     if (activityIdToSearch === activitiesDoneByDidId[i]["id"]) {
+//       return true
+//     }
+//   }
 
-  return false
-}
+//   return false
+// }

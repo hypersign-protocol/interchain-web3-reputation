@@ -52,6 +52,15 @@ export function constructQueryActivities() {
     }
 }
 
+export function constructCheckActivityStatus(didId) {
+    return {
+        "check_activity_status": {
+            "did_id": didId
+        }
+    }
+}
+
+
 export function constructQueryActivitiesByDidId(didId) {
     return {
         "activities_by_did_id": {

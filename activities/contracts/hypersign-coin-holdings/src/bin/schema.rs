@@ -1,6 +1,6 @@
 use cosmwasm_schema::write_api;
 
-use activity_contract::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
+use hypersign_coin_holdings::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
 
 fn main() {
     write_api! {

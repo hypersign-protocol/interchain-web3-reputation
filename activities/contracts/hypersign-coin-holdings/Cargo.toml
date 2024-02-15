@@ -1,5 +1,5 @@
 [package]
-name = "activity-contract"
+name = "hypersign-coin-holdings"
 version = "0.1.0"
 authors = ["Arnab Ghose <arnab.ghose128@gmail.com>"]
 edition = "2021"

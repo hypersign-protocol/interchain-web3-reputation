@@ -5,7 +5,8 @@ import {
     constructQueryActivitiesByDidId, 
     constructQueryReputationScore,
     constructExecutePerformAsyncActivity,
-    constructExecutePerformOsmosisActivity
+    constructExecutePerformOsmosisActivity,
+    constructCheckActivityStatus
 } from "./utils";
 
 /**
@@ -53,6 +54,11 @@ export async function getActivitiesById (client, activityManagerContract, didId)
     return result["activities"]
 }
 
+export async function getActivityStatusByDidId (client, activityContract, didId) {
+    let result = await smartContractQueryRPC(client, activityContract, constructCheckActivityStatus(didId))
+    return result["is_activity_completed"]
+}
+
 export async function performOsmosisActivity(client, author, activityContractAddr, didId, poolId, ibcChannel) {
     try {
         await smartContractExecuteRPC(client, author, activityContractAddr, constructExecutePerformOsmosisActivity(poolId, didId, ibcChannel))
@@ -60,3 +66,5 @@ export async function performOsmosisActivity(client, author, activityContractAdd
         throw new Error("unable to perform activity: ", activityId)
     }
 }
+
+

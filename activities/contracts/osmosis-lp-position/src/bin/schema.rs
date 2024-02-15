@@ -1,6 +1,6 @@
 use cosmwasm_schema::write_api;
 
-use osmosis_activity_contract::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
+use osmosis_lp_position::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
 
 fn main() {
     write_api! {
