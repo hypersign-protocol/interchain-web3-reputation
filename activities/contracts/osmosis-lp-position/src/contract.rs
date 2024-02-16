@@ -25,6 +25,7 @@ pub fn instantiate(
     let activity_info = ActivityInfo {
         name: msg.name,
         score: msg.score,
+        description: msg.description
     };
      
     ACTIVITY_INFO.save(deps.storage, &activity_info)?;

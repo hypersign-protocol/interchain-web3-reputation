@@ -1,13 +1,12 @@
+use activity::{ActivityExecuteMsg, ActivityQueryMsg};
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::entry_point;
 use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, to_json_binary};
 // use cw2::set_contract_version;
 
 use crate::error::ContractError;
-use crate::execute::execute_perform_activity;
-use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
-use crate::query::{query_name, query_score, query_did};
-use crate::state::{ActivityInfo, ACTIVITY_INFO};
+use crate::msg::InstantiateMsg;
+use crate::state::{ActivityInfo, ActivityParams, HypersignCoinHoldingsContract, ACTIVITY_INFO};
 
 /*
 // version info for migration info
@@ -25,6 +24,7 @@ pub fn instantiate(
     let activity_info = ActivityInfo {
         name: msg.name,
         score: msg.score,
+        description: msg.description,
         threshold_balance: msg.threshold_balance
     };
      
@@ -40,23 +40,15 @@ pub fn instantiate(
 pub fn execute(
     deps: DepsMut,
     env: Env,
-    _info: MessageInfo,
-    msg: ExecuteMsg,
+    info: MessageInfo,
+    msg: ActivityExecuteMsg<ActivityParams>,
 ) -> Result<Response, ContractError> {
-    match msg {
-        ExecuteMsg::PerformActivity { did_id } => execute_perform_activity(deps, env, did_id)
-    }
+    HypersignCoinHoldingsContract::default().execute(deps, env, info, msg)
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
-pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
-    match msg {
-        QueryMsg::Name {  } => to_json_binary(&query_name(deps)?),
-        QueryMsg::Score {  } => to_json_binary(&query_score(deps)?),
-        QueryMsg::CheckActivityStatus { did_id } => todo!(),
-        // Implement a QueryActivityStatus - checks if an activity is done or not (only)
-        QueryMsg::Did { did_id } => to_json_binary(&query_did(deps, did_id)?)
-    }
+pub fn query(deps: Deps, env: Env, msg: ActivityQueryMsg) -> StdResult<Binary> {
+    HypersignCoinHoldingsContract::default().query(deps, env, msg)
 }
 
 #[cfg(test)]

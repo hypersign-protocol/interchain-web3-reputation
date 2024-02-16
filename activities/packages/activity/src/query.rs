@@ -9,6 +9,9 @@ pub enum ActivityQueryMsg {
     // Returns Activity Score
     Score {},
 
+    // Returns Activity Description
+    Description {},
+
     // Check if Activity executed by a DID Id is completed or not
     CheckActivityStatus{
         did_id: String
@@ -23,6 +26,11 @@ pub struct NameResponse {
 #[cw_serde]
 pub struct ScoreResponse {
     pub activity_score: Uint128
+}
+
+#[cw_serde]
+pub struct DescriptionResponse {
+    pub activity_description: String
 }
 
 #[cw_serde]

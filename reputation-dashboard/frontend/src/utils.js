@@ -89,6 +89,14 @@ export function constructExecutePerformOsmosisActivity(poolId, didId, ibcChannel
     }
 }
 
+export function constructExecutePerformBalanceActivity(didId) {
+    return  {
+        "perform_activity": {
+            "activity_params": {},
+            "did_id": didId,
+        }
+    }
+}
 
 export function findAlreadyDoneActivities(activityList, activity) {
     for (var i = 0; i < activityList.length; i++) {

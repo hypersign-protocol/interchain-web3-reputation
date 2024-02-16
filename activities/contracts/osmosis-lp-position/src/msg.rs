@@ -7,7 +7,8 @@ use serde::{Deserialize, Serialize};
 #[cw_serde]
 pub struct InstantiateMsg {
     pub name: String,
-    pub score: Uint128
+    pub score: Uint128,
+    pub description: String,
 }
 
 #[cw_serde]

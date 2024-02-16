@@ -40,7 +40,7 @@ export function populateActivities(htmlElem, activityList, activitiesAlreadyDone
               </h2>
               <div id="collapse-${activityPos}" class="accordion-collapse collapse" data-bs-parent="#myAccordion">
                   <div class="card-body">
-                      <!-- Add Description which would come from Activity Contract -->
+                    <span class="descriptionSpan">${activityList[i]["description"]}</span>
                   </div>
               </div>
       </div>
@@ -67,7 +67,7 @@ export function populateActivities(htmlElem, activityList, activitiesAlreadyDone
               </h2>
               <div id="collapse-${activityPos}" class="accordion-collapse collapse" data-bs-parent="#myAccordion">
                   <div class="card-body">
-                      <!-- Add Description which would come from Activity Contract -->
+                  <span class="descriptionSpan">${activityList[i]["description"]}</span>
                       <div class="col-sm-4 text-right">
                         <button  
                           class="btn btn-outline-primary verify-btn activity-verify-btn" data-activity-index="${activityPos}"

@@ -93,3 +93,22 @@ export async function smartContractQueryRPC(
     }
 }
 
+
+export const hypersignBalanceActivityContracts = [
+    "hid1efnsf3ruvvq5gtywy02nc05w0ecz8la2m0dzgyd4xemrawmk756qmg9sft"
+]
+
+export const osmosisLiquidityUserPositionContracts = [
+    "hid1d8m875429a9ap2w3yx4z9lrghzv67t5vpunvx9p38hxyzfmsqtmqaagwvl"
+]
+
+export function checkIfContractExistsInList(contractList, contractToSearch) {
+    for (let i=0; i < contractList.length; i++) {
+        if (contractToSearch == contractList[i]) {
+            return true
+        }
+    }
+
+    return false
+}
+

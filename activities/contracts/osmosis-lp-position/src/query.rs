@@ -13,6 +13,7 @@ impl<'a> OsmosisActivityContract<'a> {
         match msg {
             ActivityQueryMsg::Name {  } => to_json_binary(&self.name(deps)?),
             ActivityQueryMsg::Score {  } => to_json_binary(&self.score(deps)?),
+            ActivityQueryMsg::Description {  } => to_json_binary(&self.description(deps)?),
             ActivityQueryMsg::CheckActivityStatus { did_id } => to_json_binary(&self.check_activity_status(deps, did_id)?)
         }
     }

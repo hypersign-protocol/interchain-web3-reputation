@@ -12,13 +12,10 @@ use crate::{msg::{CheckActivityStatusResponse, IbcQueryMsg, NameResponse, ScoreR
 pub struct ActivityInfo {
     pub name: String,
     pub score: Uint128,
+    pub description: String,
 }
 
-
 pub const ACTIVITY_INFO: Item<ActivityInfo> = Item::new("activity_info");
-
-// pub const ACTIVITY_MAP: Map<String, bool> = Map::new("activity_map");
-
 
 pub struct OsmosisActivityContract<'a> 
 {
@@ -94,6 +91,14 @@ impl<'a> ActivityQuery for OsmosisActivityContract<'a>
     ) -> StdResult<activity::ScoreResponse> {
         let activity_info = ACTIVITY_INFO.load(deps.storage)?;
         Ok(activity::ScoreResponse { activity_score: activity_info.score })
+    }
+
+    fn description(
+            &self,
+            deps: Deps
+        ) -> StdResult<activity::DescriptionResponse> {
+        let activity_info = ACTIVITY_INFO.load(deps.storage)?;
+        Ok(activity::DescriptionResponse { activity_description: activity_info.description })
     }
 
     fn check_activity_status(

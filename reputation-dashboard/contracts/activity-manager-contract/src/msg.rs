@@ -59,6 +59,7 @@ pub struct ActivityResponse {
 pub enum ActivityQuery {
     Name {},
     Score {},
+    Description {},
     CheckActivityStatus{
         did_id: String
     },
@@ -78,6 +79,11 @@ pub struct NameResponse {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct ScoreResponse {
     pub activity_score: Uint128
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub struct DescriptionResponse {
+    pub activity_description: String
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]

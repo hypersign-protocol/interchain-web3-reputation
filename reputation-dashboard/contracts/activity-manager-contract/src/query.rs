@@ -11,6 +11,7 @@ pub fn query_activities(deps: Deps) -> StdResult<ActivitiesResponse> {
                 id: activity.id,
                 name: activity.name,
                 score: activity.score,
+                description: activity.description
             })
         })
         .collect::<StdResult<Vec<Activity>>>()?;
@@ -26,6 +27,7 @@ pub fn query_activities_by_did_id(deps: Deps, did_id: String) -> StdResult<Activ
                 id: activity.id,
                 name: activity.name,
                 score: activity.score,
+                description: activity.description
             })
         })
         .collect::<StdResult<Vec<Activity>>>()?;

@@ -1,6 +1,6 @@
 use cosmwasm_std::{Binary, Deps, DepsMut, Env, Response, StdResult};
 
-use crate::query::{CheckActivityStatusResponse, NameResponse, ScoreResponse};
+use crate::query::{CheckActivityStatusResponse, DescriptionResponse, NameResponse, ScoreResponse};
 
 
 pub trait ActivityExecute<T>
@@ -26,6 +26,11 @@ pub trait ActivityQuery {
         &self,
         deps: Deps
     ) -> StdResult<ScoreResponse>;
+
+    fn description(
+        &self,
+        deps: Deps
+    ) -> StdResult<DescriptionResponse>;
 
     fn check_activity_status(
         &self,

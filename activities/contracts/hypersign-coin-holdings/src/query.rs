@@ -1,18 +1,20 @@
-use cosmwasm_std::{Deps, StdResult};
+use activity::{ActivityQuery, ActivityQueryMsg};
+use cosmwasm_std::{to_json_binary, Binary, Deps, Env, StdResult};
 
-use crate::{state::{ACTIVITY_INFO, ACTIVITY_MAP}, msg::{NameResponse, ScoreResponse, DidResponse}};
+use crate::{msg::{DidResponse, NameResponse, ScoreResponse}, state::{HypersignCoinHoldingsContract, ACTIVITY_INFO}};
 
-pub fn query_name(deps: Deps) -> StdResult<NameResponse> {
-    let activity_info = ACTIVITY_INFO.load(deps.storage)?;
-    Ok(NameResponse { activity_name: activity_info.name })
-}
-
-pub fn query_score(deps: Deps) -> StdResult<ScoreResponse> {
-    let activity_info = ACTIVITY_INFO.load(deps.storage)?;
-    Ok(ScoreResponse { activity_score: activity_info.score })
-}
-
-pub fn query_did(deps: Deps, did_id: String) -> StdResult<DidResponse> {
-    let result = ACTIVITY_MAP.has(deps.storage, did_id);
-    Ok(DidResponse { result })
+impl<'a> HypersignCoinHoldingsContract<'a> {
+    pub fn query(
+        &self,
+        deps: Deps,
+        _env: Env,
+        msg: ActivityQueryMsg
+    ) -> StdResult<Binary> {
+        match msg {
+            ActivityQueryMsg::Name {  } => to_json_binary(&self.name(deps)?),
+            ActivityQueryMsg::Score {  } => to_json_binary(&self.score(deps)?),
+            ActivityQueryMsg::Description {  } => to_json_binary(&self.description(deps)?),
+            ActivityQueryMsg::CheckActivityStatus { did_id } => to_json_binary(&self.check_activity_status(deps, did_id)?)
+        }
+    }
 }

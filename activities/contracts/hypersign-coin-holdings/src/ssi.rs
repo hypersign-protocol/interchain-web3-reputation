@@ -78,14 +78,30 @@ pub fn query_did_id_from_address(deps: Deps, address: &String) -> StdResult<Quer
     Ok(res)
 }
 
-pub fn get_blockchain_address(did: &DidDoc) -> String {
-    let vm: Vec<VerificationMethod> = did.to_owned().verificationMethod;
-    let vm_element: &VerificationMethod = &vm[0];
-    let blockchain_account_id: String = vm_element.clone().blockchainAccountId;
-    let elements: Vec<&str> = blockchain_account_id.split(':').collect();
-    let blockchain_address = elements.last().cloned().unwrap();
-    return blockchain_address.to_string();
+fn strip_blockchain_account_id(blockchain_account_id: String) -> Vec<String> {
+    let elements: Vec<String> = blockchain_account_id.split(':').map(String::from).collect();
+    elements
 }
+
+fn is_osmosis_address(address: String, prefix: &str) -> bool {
+    address.starts_with(prefix) 
+}
+
+pub fn get_blockchain_address(did: &DidDoc) -> String {
+    let vms: Vec<VerificationMethod> = did.to_owned().verificationMethod;
+    
+    // select only the vm which has `osmo` in their blockchainAccountId
+    for vm in vms.iter() {
+        let blockchain_account_id_elements = strip_blockchain_account_id(vm.clone().blockchainAccountId);
+        let address = &blockchain_account_id_elements[2];
+        if is_osmosis_address(address.into(), "hid") {
+            return address.into()
+        }
+    }
+
+    return "".to_string();
+}
+
 
 
 fn query<U: DeserializeOwned>(deps: Deps, request: &QueryRequest<SsiQuery>) -> StdResult<U> {

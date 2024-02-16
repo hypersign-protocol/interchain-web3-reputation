@@ -6,7 +6,8 @@ import {
     constructQueryReputationScore,
     constructExecutePerformAsyncActivity,
     constructExecutePerformOsmosisActivity,
-    constructCheckActivityStatus
+    constructCheckActivityStatus,
+    constructExecutePerformBalanceActivity
 } from "./utils";
 
 /**
@@ -62,6 +63,14 @@ export async function getActivityStatusByDidId (client, activityContract, didId)
 export async function performOsmosisActivity(client, author, activityContractAddr, didId, poolId, ibcChannel) {
     try {
         await smartContractExecuteRPC(client, author, activityContractAddr, constructExecutePerformOsmosisActivity(poolId, didId, ibcChannel))
+    } catch (error) {
+        throw new Error("unable to perform activity: ", activityId)
+    }
+}
+
+export async function performBalanceActivity(client, author, activityContractAddr, didId) {
+    try {
+        await smartContractExecuteRPC(client, author, activityContractAddr, constructExecutePerformBalanceActivity(didId))
     } catch (error) {
         throw new Error("unable to perform activity: ", activityId)
     }

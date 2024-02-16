@@ -7,7 +7,8 @@ use serde::{Deserialize, Serialize};
 pub struct Activity {
     pub id: String,
     pub name: String,
-    pub score: Uint128
+    pub score: Uint128,
+    pub description: String
 }
 
 // id: Activity

@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 pub struct InstantiateMsg {
     pub name: String,
     pub score: Uint128,
+    pub description: String,
     pub threshold_balance: Uint128
 }
 

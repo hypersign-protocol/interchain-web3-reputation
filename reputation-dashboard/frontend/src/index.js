@@ -14,11 +14,14 @@ import {
 import {
   smartContractExecuteRPC,
   smartContractQueryRPC,
-  smartContractCodeInstantiateRPC
+  smartContractCodeInstantiateRPC,
+  checkIfContractExistsInList,
+  hypersignBalanceActivityContracts,
+  osmosisLiquidityUserPositionContracts
 } from './smartContract';
 import { buildTable, getNFTTokensData, getContractMetadata, populateActivities } from './elements';
 import "./styles/style.css";
-import { filterCompletedActivities, getActivities, getActivitiesById, getActivity1, getActivity2, getActivityStatusByDidId, getScore, getScoreWithBreakdown, performAsyncActivity, performOsmosisActivity } from './score';
+import { filterCompletedActivities, getActivities, getActivitiesById, getActivity1, getActivity2, getActivityStatusByDidId, getScore, getScoreWithBreakdown, performAsyncActivity, performBalanceActivity, performOsmosisActivity } from './score';
 import { generateAndSignDidDocument, setDidDocument } from './ssi/document';
 import { checkIfDidExists, registerDIDCreateTransaction } from './ssi/rpc';
 
@@ -191,7 +194,7 @@ scoreRefreshBtn.onclick = async () => {
 
 async function setExecuteBtnToLoad(target) {
   target.innerHTML = `
-  <div class="spinner-border text-light" role="status">
+  <div class="spinner-border text-dark" role="status">
   <span class="sr-only">Loading...</span>
   </div>
   `
@@ -203,36 +206,50 @@ cardParent.addEventListener('click', async (event) => {
   const target = event.target;
 
   if (target.classList.contains('activity-verify-btn')) {
-    if (!confirm("This is a on-chain activity. You will incur gas fee even if the tx fails. Make sure you have already provided liquidity on Osmosis LP pool")) {
-      return
-    }
-
     const idx = target.dataset.activityIndex;
+    let found = 0;
 
     try {
-      let pool_id = 1;
-      let ibc_channel = "channel-13";
-      await performOsmosisActivity(signingClient, userAddress, activityIdx[idx], didId, pool_id, ibc_channel)
-      
+      if (checkIfContractExistsInList(hypersignBalanceActivityContracts, activityIdx[idx])) {
+        await performBalanceActivity(signingClient, userAddress, activityIdx[idx], didId)
+        found = 1;
+      } else if (checkIfContractExistsInList(osmosisLiquidityUserPositionContracts, activityIdx[idx])) {
+        if (!confirm("This is a on-chain activity. You will incur gas fee even if the tx fails. Make sure you have already provided liquidity on Osmosis LP pool")) {
+          return
+        }
+
+        let pool_id = 1;
+        let ibc_channel = "channel-14";
+        await performOsmosisActivity(signingClient, userAddress, activityIdx[idx], didId, pool_id, ibc_channel)
+        found = 1
+      } else {
+        throw new Error("only Hypersign Balance and Osmosis LP position activity contracts are configurable for UI")
+      }
     } catch (error) {
       alert(error)
       return
     } finally {
-      await setExecuteBtnToLoad(target)
-  
-      const interval = setInterval( async () => {
-        let response = await getActivityStatusByDidId(normalClient, activityIdx[idx], didId)
-        if (response) {
-          clearInterval(interval)
-          target.style.display = 'none';
-          
-          let checkIcon = document.getElementById(`check-icon-${idx}`)
-          checkIcon.innerHTML ='<i class="fas fa-check"></i>'
-          checkIcon.previousElementSibling.style.display = 'none';
+      if (found == 1) {
+        await setExecuteBtnToLoad(target)
 
-          didScore.innerText = await getScore(normalClient, reputationEngineContractAddress, didId, activityManagerContractAddress)
-        }
-      }, 2000)
+        const interval = setInterval( async () => {
+          let response = await getActivityStatusByDidId(normalClient, activityIdx[idx], didId)
+  
+          if (response) {
+            clearInterval(interval)
+            target.style.display = 'none';
+            
+            let checkIcon = document.getElementById(`check-icon-${idx}`)
+            checkIcon.innerHTML ='<i class="fas fa-check"></i>'
+            checkIcon.previousElementSibling.style.display = 'none';
+  
+            didScore.innerText = await getScore(normalClient, reputationEngineContractAddress, didId, activityManagerContractAddress)
+          }
+        }, 2000)
+      } else {
+        return
+      }
+  
     }
   }
 })
