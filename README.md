@@ -1,4 +1,6 @@
-# Web3 Reputation
+#  Interchain Web3 Reputation
+
+Interchain web3 reputation is an experimental project where we want to create web3 reputation of wallet address (s) across all Cosmos chains.
 
 ## Directories
 
