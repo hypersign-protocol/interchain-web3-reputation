@@ -8,10 +8,9 @@ pub struct Activity {
     pub id: String,
     pub name: String,
     pub score: Uint128,
+    pub description: String
 }
 
 // id: Activity
 pub const ACTIVITIES: Map<String, Activity> = Map::new("activity_register");
 
-// Did_Id : List<Activity_Id>
-pub const DID_ACTIVITY_MAP: Map<String, Vec<Activity>> = Map::new("did_activity_map");

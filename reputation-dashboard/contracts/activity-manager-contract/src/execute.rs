@@ -1,39 +1,63 @@
-use cosmwasm_std::{Response, WasmMsg, to_json_binary, SubMsg, Deps, Binary};
+use cosmwasm_std::{to_json_binary, CustomMsg, DepsMut, Response, StdError, StdResult, SubMsg, WasmMsg};
 
-use crate::{ContractError, msg::ActivityMsg, reply::{REGISTER_ACTIVITY_REPLY_ID, PERFORM_ACTIVITY_REPLY_ID}, query::query_activity};
+use crate::{msg::{ActivityQuery, CheckActivityStatusResponse, DescriptionResponse, NameResponse, ScoreResponse}, state::{Activity, ACTIVITIES}, ContractError};
 
-pub fn execute_register_activity(contract_address: String) -> Result<Response, ContractError> {
-    let activity_msg = ActivityMsg::VerifyActivity { 
-        activity_params: to_json_binary("").unwrap(), 
-        register_verify: true 
+pub fn execute_register_activity(deps: DepsMut, contract_address: String) -> Result<Response, ContractError> {
+    let activity_name_response: StdResult<NameResponse> = match deps.querier.query_wasm_smart(
+        contract_address.clone(),
+        &ActivityQuery::Name {  }
+    ) {
+        Err(_) => {
+            return Err(ContractError::Std(StdError::generic_err("unable to fetch Activity name")))
+        },
+        Ok(resp) => Ok(resp)
     };
+    let activity_name = activity_name_response.unwrap().activity_name;
 
-    let msg = WasmMsg::Execute { 
-        contract_addr: contract_address, 
-        msg: to_json_binary(&activity_msg)?, 
-        funds: vec![]
+    // Check if Activity Contract has implemented the Score method
+    let activity_score_response: StdResult<ScoreResponse> = match deps.querier.query_wasm_smart(
+        contract_address.clone(),
+        &ActivityQuery::Score {  }
+    ) {
+        Err(_) => {
+            return Err(ContractError::Std(StdError::generic_err("unable to fetch Activity score")))
+        },
+        Ok(resp) => Ok(resp)
     };
+    let activity_score = activity_score_response.unwrap().activity_score;
 
-    let sub_msg = SubMsg::reply_on_success(msg, REGISTER_ACTIVITY_REPLY_ID);
+    // Check if Activity Contract has implemented the Description method
+    let activity_score_response: StdResult<DescriptionResponse> = match deps.querier.query_wasm_smart(
+        contract_address.clone(),
+        &ActivityQuery::Description {  }
+    ) {
+        Err(_) => {
+            return Err(ContractError::Std(StdError::generic_err("unable to fetch Activity score")))
+        },
+        Ok(resp) => Ok(resp)
+    };
+    let activity_description = activity_score_response.unwrap().activity_description;
 
-    Ok(Response::new().add_submessage(sub_msg))
-}
-
-pub fn execute_perform_activity(deps: Deps, activity_id: String, activity_params: Binary) -> Result<Response, ContractError> {
-    let activity = query_activity(deps, activity_id).unwrap().activity;
+    // Check if CheckActivityStatus method is implemented
+    let _: StdResult<CheckActivityStatusResponse> = match deps.querier.query_wasm_smart(
+        contract_address.clone(),
+        &ActivityQuery::CheckActivityStatus { did_id: "did:hid:1".to_string() }
+    ) {
+        Err(_) => {
+            return Err(ContractError::Std(StdError::generic_err("unable to query CheckActivityStatus function from Activity contract")))
+        },
+        Ok(resp) => Ok(resp)
+    };
     
-    let activity_msg = ActivityMsg::VerifyActivity { 
-        activity_params: activity_params,
-        register_verify: false 
+    // Register Activity
+    let activity = Activity {
+        id: contract_address.clone(), //TODO: make it external user input
+        name: activity_name,
+        score: activity_score,
+        description: activity_description
     };
+    
+    ACTIVITIES.save(deps.storage, contract_address.clone(), &activity)?;
 
-    let msg = WasmMsg::Execute {
-        contract_addr: activity.id, 
-        msg: to_json_binary(&activity_msg)?, 
-        funds: vec![]
-    };
-
-    let sub_msg = SubMsg::reply_on_success(msg, PERFORM_ACTIVITY_REPLY_ID);
-
-    Ok(Response::new().add_submessage(sub_msg))
+    Ok(Response::new().add_attribute("activity_registered", activity.id))
 }

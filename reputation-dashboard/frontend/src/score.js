@@ -1,5 +1,14 @@
 import { smartContractExecuteRPC, smartContractQueryRPC } from "./smartContract";
-import { constructExecutePerformActivity, constructQueryActivities, constructQueryActivitiesByDidId, constructQueryReputationScore } from "./utils";
+import { 
+    constructExecutePerformActivity, 
+    constructQueryActivities, 
+    constructQueryActivitiesByDidId, 
+    constructQueryReputationScore,
+    constructExecutePerformAsyncActivity,
+    constructExecutePerformOsmosisActivity,
+    constructCheckActivityStatus,
+    constructExecutePerformBalanceActivity
+} from "./utils";
 
 /**
    {
@@ -23,8 +32,7 @@ import { constructExecutePerformActivity, constructQueryActivities, constructQue
 */
 export async function getScoreWithBreakdown(client, reputationEngineContractAddr,  did_id, activity_manager_contract) {
     let result = await smartContractQueryRPC(client, reputationEngineContractAddr, constructQueryReputationScore(
-        did_id, 
-        activity_manager_contract
+        did_id
       )
     )
 
@@ -47,11 +55,26 @@ export async function getActivitiesById (client, activityManagerContract, didId)
     return result["activities"]
 }
 
+export async function getActivityStatusByDidId (client, activityContract, didId) {
+    let result = await smartContractQueryRPC(client, activityContract, constructCheckActivityStatus(didId))
+    return result["is_activity_completed"]
+}
 
-export async function performActivity(client, author, activityManagerContractAddr, didId, activityId) {
+export async function performOsmosisActivity(client, author, activityContractAddr, didId, poolId, ibcChannel) {
     try {
-        await smartContractExecuteRPC(client, author, activityManagerContractAddr, constructExecutePerformActivity(activityId, didId))
+        await smartContractExecuteRPC(client, author, activityContractAddr, constructExecutePerformOsmosisActivity(poolId, didId, ibcChannel))
     } catch (error) {
-        throw new Error("unable to perform activity: ", activityId)
+        throw new Error("unable to perform Osmosis Liquidity Position activity: ", error)
     }
 }
+
+export async function performBalanceActivity(client, author, activityContractAddr, didId) {
+    try {
+        await smartContractExecuteRPC(client, author, activityContractAddr, constructExecutePerformBalanceActivity(didId))
+    } catch (error) {
+        console.log("errrr ", error)
+        throw new Error("unable to perform Hypersign Balance Check activity: ", error)
+    }
+}
+
+

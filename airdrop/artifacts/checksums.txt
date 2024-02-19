@@ -1,0 +1,2 @@
+5102fab6bb61500f4be7b872a09aa32a116305b83ee936e145521d27527a517e  airdrop_contract.wasm
+26f8ba03518bf251e0ac00fba9b768acc2473cbcf8414e4544deeed674693f0b  osmosis_proxy_contract.wasm

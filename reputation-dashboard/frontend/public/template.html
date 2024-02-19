@@ -6,28 +6,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reputation Dashboard</title>
   <!-- Link to Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
     integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
-  <!-- Additional styles can be added here if needed -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Additional styles can be added here if needed -->
 </head>
 
 <body>
 
   <!-- Nav Bar-->
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light" style="padding: 10px;">
     <a class="navbar-brand" href="#">Reputation</a>
     <div class="navbar-collapse justify-content-center" id="navbarNav">
       <span id="keplrDidId"></span>
     </div>
     <ul class="navbar-nav">
       <li class="nav-item">
-        <button class="nav-link btn btn-primary text-white" id="WalletLogin"><i class="fas fa-sync" id="icon-keplr"></i>
+        <button class="btn btn-primary" id="WalletLogin"><i class="fas fa-sync" id="icon-keplr"></i>
           Connect Keplr</button>
       </li>
     </ul>
   </nav>
 
+  <!-- to be reviewed -->
+  
   <div class="modal" tabindex="-1" role="dialog" id="customModal">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -51,19 +54,19 @@
   <div class="container">
     <div class="row">
 
-      <!-- Column for Cards -->
+      <!-- Column for Cards ACtivity-->
       <div class="col-md-8" id="cardParent"> <!-- Adjust the size as needed -->
       </div>
 
       <!-- Column for Circular Progress -->
-      <div id="score-parent" style="display: none;"> <!-- Adjust the size as needed -->
+      <div id="score-parent" class="col-md-4" style="display: none;"> <!-- Adjust the size as needed -->
         <div class="circle-container">
           <div class="circle">
             <div class="score" id="didScore">0</div>
           </div>
         </div>
-        <div>
-          <button id="scoreRefreshBtn">Refresh Score</button>
+        <div style="display: flex; justify-content: center;">
+          <button id="scoreRefreshBtn" class="btn btn-outline-primary">Refresh Score</button>
         </div>
       </div>
 
@@ -75,7 +78,8 @@
   <!-- Link to Popper.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
   <!-- Link to Bootstrap JS -->
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

@@ -19,3 +19,20 @@
     color: white; /* Text color */
     font-size: 2em; /* Text size */
 }
+
+.headerBtn {
+    width: 100%;
+    display: block;
+}
+
+.headerBtn .nameSpan {
+    float: left;
+}
+
+.headerBtn .scoreSpan {
+    float: right;
+}
+
+.headerBtn .checkIconSpan {
+    float: right;
+}

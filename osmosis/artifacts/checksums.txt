@@ -1,0 +1,1 @@
+65b12642e28beb127aba8988c1bb35ae28e3ccc8e52099ff238815a78a71cb23  osmosis_proxy_contract.wasm

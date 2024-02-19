@@ -14,11 +14,14 @@ import {
 import {
   smartContractExecuteRPC,
   smartContractQueryRPC,
-  smartContractCodeInstantiateRPC
+  smartContractCodeInstantiateRPC,
+  checkIfContractExistsInList,
+  hypersignBalanceActivityContracts,
+  osmosisLiquidityUserPositionContracts
 } from './smartContract';
 import { buildTable, getNFTTokensData, getContractMetadata, populateActivities } from './elements';
 import "./styles/style.css";
-import { getActivities, getActivitiesById, getActivity1, getActivity2, getScore, performActivity } from './score';
+import { filterCompletedActivities, getActivities, getActivitiesById, getActivity1, getActivity2, getActivityStatusByDidId, getScore, getScoreWithBreakdown, performAsyncActivity, performBalanceActivity, performOsmosisActivity } from './score';
 import { generateAndSignDidDocument, setDidDocument } from './ssi/document';
 import { checkIfDidExists, registerDIDCreateTransaction } from './ssi/rpc';
 
@@ -39,6 +42,7 @@ let scoreRefreshBtn = document.getElementById("scoreRefreshBtn");
 let cardParent = document.getElementById("cardParent");
 let registerDidBtn = document.getElementById("registerDidBtn");
 let scoreParent = document.getElementById("score-parent");
+let checkIconSpan = document.getElementById("check-icon");
 
 // Global vars (Keplr)
 let didId = ""
@@ -61,6 +65,7 @@ let activityIdx = null;
 // Contract Addresses
 const reputationEngineContractAddress = process.env.REPUTATION_ENGINE_CONTRACT_ADDRESS;
 const activityManagerContractAddress = process.env.ACTIVITY_MANAGER_CONTRACT_ADDRESS;
+const osmosisActivityContractAddress = process.env.OSMOSIS_ACTIVITY_CONTRACT_ADDRESS;
 
 window.onload = async () => {
   normalClient = await createNonSigningClient(chainRPC)
@@ -68,6 +73,8 @@ window.onload = async () => {
   // Display all Activities
   activities = await getActivities(normalClient, activityManagerContractAddress)
   activityIdx = populateActivities(cardParent, activities, activitiesByDidId)
+
+  
 }
 
 // Load the address upon connecting the wallet
@@ -185,20 +192,124 @@ scoreRefreshBtn.onclick = async () => {
   }
 }
 
+async function setExecuteBtnToLoad(target) {
+  target.innerHTML = `
+  <div class="spinner-border text-dark" role="status">
+  <span class="sr-only">Loading...</span>
+  </div>
+  `
+  target.disabled = true
+}
+
+function setExecuteBtnToVerify(target, idx) {
+  target.innerText = `Verify`
+  target.style = "margin-left: 128%; margin-top: 5%;"
+  target.className = "btn btn-outline-primary verify-btn activity-verify-btn"
+  target.dataset.activityIndex = idx
+  target.disabled = false
+}
+
 // Add event to all verify buttons
 cardParent.addEventListener('click', async (event) => {
   const target = event.target;
-
+  
   if (target.classList.contains('activity-verify-btn')) {
     const idx = target.dataset.activityIndex;
+    let found = 0;
 
     try {
-      await performActivity(signingClient, userAddress, activityManagerContractAddress, didId, activityIdx[idx]);
+      await setExecuteBtnToLoad(target)
 
-      target.innerHTML = '<i class="fas fa-check"></i>';
-      target.disabled = true;
+      if (checkIfContractExistsInList(hypersignBalanceActivityContracts, activityIdx[idx])) {
+        await performBalanceActivity(signingClient, userAddress, activityIdx[idx], didId)
+        found = 1;
+      } else if (checkIfContractExistsInList(osmosisLiquidityUserPositionContracts, activityIdx[idx])) {
+        if (!confirm("This is a on-chain activity. You will incur gas fee even if the tx fails. Make sure you have already provided liquidity on Osmosis LP pool")) {
+          return
+        }
+
+        let pool_id = 1;
+        let ibc_channel = "channel-14";
+        await performOsmosisActivity(signingClient, userAddress, activityIdx[idx], didId, pool_id, ibc_channel)
+        found = 1
+      } else {
+        found = 0
+        throw new Error("only Hypersign Balance and Osmosis LP position activity contracts are configurable for UI")
+      }
     } catch (error) {
+      setExecuteBtnToVerify(target, idx)
       alert(error)
+      return
+    } finally {
+      if (found == 1) {
+        const interval = setInterval( async () => {
+          let response = await getActivityStatusByDidId(normalClient, activityIdx[idx], didId)
+  
+          if (response) {
+            clearInterval(interval)
+            target.style.display = 'none';
+            
+            let checkIcon = document.getElementById(`check-icon-${idx}`)
+            checkIcon.innerHTML ='<i class="fas fa-check"></i>'
+            checkIcon.previousElementSibling.style.display = 'none';
+  
+            didScore.innerText = await getScore(normalClient, reputationEngineContractAddress, didId, activityManagerContractAddress)
+          }
+        }, 2000)
+      } else {
+        return
+      }
+  
     }
   }
 })
+
+function getVerifyButtonElementForActivityIdx(idx) {
+  let verifyBtns = document.getElementsByClassName("activity-verify-btn")
+  for (let i = 0; i < verifyBtns.length; i++) {
+    if (verifyBtns[i].dataset.activityIndex == idx) {
+      verifyBtns[i].innerHTML = '<i class="fas fa-check"></i>';
+      verifyBtns[i].disabled = true;
+      return
+    }
+  }
+}
+
+// Add event to all verify buttons
+// cardParent.addEventListener('click', async (event) => {
+//   const target = event.target;
+
+//   if (target.classList.contains('activity-reload-btn')) {
+//     const idx = target.dataset.activityIndex;
+
+//     try {
+//       let scoreComplete = await getScoreWithBreakdown(signingClient, reputationEngineContractAddress, didId, "")
+//       let activitiesDoneByDidId = scoreComplete["score_breakdown"]["activities"]
+      
+//       if (checkActivityDoneAfterReload(activitiesDoneByDidId, activityIdx[idx])) {
+//         getVerifyButtonElementForActivityIdx(idx)
+//         target.style.display = 'none'
+//         didScore.innerText = await getScore(signingClient, reputationEngineContractAddress, didId, activityManagerContractAddress)
+//         return
+//       } else {
+//         // add alert
+//         alert("Activity has not been completed")
+//       }
+
+//     } catch (error) {
+//       alert(error)
+//     }
+//   }
+// })
+
+
+// // check if particular activity is done
+// function checkActivityDoneAfterReload(activitiesDoneByDidId, activityIdToSearch) {
+//   for (let i = 0; i < activitiesDoneByDidId.length; i++) {
+//     if (activityIdToSearch === activitiesDoneByDidId[i]["id"]) {
+//       return true
+//     }
+//   }
+
+//   return false
+// }

@@ -3,20 +3,6 @@
 version = 3
 
 [[package]]
-name = "activity-contract"
-version = "0.1.0"
-dependencies = [
- "cosmwasm-schema",
- "cosmwasm-std",
- "cw-multi-test",
- "cw-storage-plus",
- "cw2",
- "schemars",
- "serde",
- "thiserror",
-]
-
-[[package]]
 name = "activity-manager-contract"
 version = "0.1.0"
 dependencies = [

@@ -44,6 +44,7 @@ pub struct Activity {
     pub id: String,
     pub name: String,
     pub score: Uint128,
+    pub description: String,
 }
 
 //  ---------------- External Contract ---------------- //

@@ -13,10 +13,6 @@ pub enum ExecuteMsg {
     RegisterActivity {
         contract_address: String
     },
-    PerformActivity {
-        activity_id: String,
-        activity_params: Binary
-    }
 }
 
 #[cw_serde]
@@ -60,18 +56,20 @@ pub struct ActivityResponse {
 // ---------- External ----------------- //
 
 #[cw_serde]
-pub enum ActivityMsg {
-    VerifyActivity {
-        activity_params: Binary,
-        register_verify: bool
-    }
-}
-
-#[cw_serde]
 pub enum ActivityQuery {
     Name {},
-    Score {}
+    Score {},
+    Description {},
+    CheckActivityStatus{
+        did_id: String
+    },
 }
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub struct CheckActivityStatusResponse {
+    pub is_activity_completed: bool
+}
+
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct NameResponse {
@@ -81,4 +79,14 @@ pub struct NameResponse {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct ScoreResponse {
     pub activity_score: Uint128
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub struct DescriptionResponse {
+    pub activity_description: String
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
+pub struct CheckActivityResponse {
+    pub result: bool
 }

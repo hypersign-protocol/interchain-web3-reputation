@@ -52,6 +52,15 @@ export function constructQueryActivities() {
     }
 }
 
+export function constructCheckActivityStatus(didId) {
+    return {
+        "check_activity_status": {
+            "did_id": didId
+        }
+    }
+}
+
+
 export function constructQueryActivitiesByDidId(didId) {
     return {
         "activities_by_did_id": {
@@ -60,7 +69,7 @@ export function constructQueryActivitiesByDidId(didId) {
     }
 }
 
-export function constructQueryReputationScore(didId, activity_contract) {
+export function constructQueryReputationScore(didId) {
     return {
         "query_score_by_did_id": {
             "did_id": didId,
@@ -68,17 +77,23 @@ export function constructQueryReputationScore(didId, activity_contract) {
     }
 }
 
-export function constructExecutePerformActivity(activityId, didId) {
-    let activityParams = btoa(JSON.stringify(
-        {
-            "did_id": didId
-        }
-    ))
-
+export function constructExecutePerformOsmosisActivity(poolId, didId, ibcChannel) {
     return  {
         "perform_activity": {
-            "activity_id": activityId,
-            "activity_params": activityParams
+            "activity_params": {
+                "pool_id": poolId,
+                "ibc_channel": ibcChannel
+            },
+            "did_id": didId,
+        }
+    }
+}
+
+export function constructExecutePerformBalanceActivity(didId) {
+    return  {
+        "perform_activity": {
+            "activity_params": {},
+            "did_id": didId,
         }
     }
 }
