@@ -64,7 +64,7 @@ export async function performOsmosisActivity(client, author, activityContractAdd
     try {
         await smartContractExecuteRPC(client, author, activityContractAddr, constructExecutePerformOsmosisActivity(poolId, didId, ibcChannel))
     } catch (error) {
-        throw new Error("unable to perform activity: ", activityId)
+        throw new Error("unable to perform Osmosis Liquidity Position activity: ", error)
     }
 }
 
@@ -72,7 +72,8 @@ export async function performBalanceActivity(client, author, activityContractAdd
     try {
         await smartContractExecuteRPC(client, author, activityContractAddr, constructExecutePerformBalanceActivity(didId))
     } catch (error) {
-        throw new Error("unable to perform activity: ", activityId)
+        console.log("errrr ", error)
+        throw new Error("unable to perform Hypersign Balance Check activity: ", error)
     }
 }
 

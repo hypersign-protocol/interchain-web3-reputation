@@ -1,0 +1,2 @@
+7a4157e38e2f370a626c0ae65a29a9126632e738bb87346624e6dc0b6f67b888  activity_manager_contract.wasm
+8b73770ba753e2036d1b8a879fc5d00229e554fa535867d7d8e54b370fb47453  reputation_engine_contract.wasm

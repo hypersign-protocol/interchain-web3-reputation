@@ -8,5 +8,5 @@ SOURCE_CHAIN="hidnode"
 
 while true; do
     hermes clear packets --chain $SOURCE_CHAIN --port $CONTRACT_PORT --channel $CHANNEL_ID
-    sleep 10
+    sleep 5
 done

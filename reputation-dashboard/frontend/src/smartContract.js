@@ -69,8 +69,7 @@ export async function smartContractExecuteRPC(
         console.log("Transaction hash: ", txResult["transactionHash"]);
         alert("Transaction Successful: " + txResult["transactionHash"]);
     } catch (err) {
-        console.log(err.message)
-        alert("Transaction has failed, Error Log below \n\n " + err.message)
+        throw new Error(err)
     }
 }
 

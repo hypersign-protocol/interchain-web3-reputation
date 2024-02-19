@@ -201,15 +201,25 @@ async function setExecuteBtnToLoad(target) {
   target.disabled = true
 }
 
+function setExecuteBtnToVerify(target, idx) {
+  target.innerText = `Verify`
+  target.style = "margin-left: 128%; margin-top: 5%;"
+  target.className = "btn btn-outline-primary verify-btn activity-verify-btn"
+  target.dataset.activityIndex = idx
+  target.disabled = false
+}
+
 // Add event to all verify buttons
 cardParent.addEventListener('click', async (event) => {
   const target = event.target;
-
+  
   if (target.classList.contains('activity-verify-btn')) {
     const idx = target.dataset.activityIndex;
     let found = 0;
 
     try {
+      await setExecuteBtnToLoad(target)
+
       if (checkIfContractExistsInList(hypersignBalanceActivityContracts, activityIdx[idx])) {
         await performBalanceActivity(signingClient, userAddress, activityIdx[idx], didId)
         found = 1;
@@ -223,15 +233,15 @@ cardParent.addEventListener('click', async (event) => {
         await performOsmosisActivity(signingClient, userAddress, activityIdx[idx], didId, pool_id, ibc_channel)
         found = 1
       } else {
+        found = 0
         throw new Error("only Hypersign Balance and Osmosis LP position activity contracts are configurable for UI")
       }
     } catch (error) {
+      setExecuteBtnToVerify(target, idx)
       alert(error)
       return
     } finally {
       if (found == 1) {
-        await setExecuteBtnToLoad(target)
-
         const interval = setInterval( async () => {
           let response = await getActivityStatusByDidId(normalClient, activityIdx[idx], didId)
   
