@@ -1,8 +1,7 @@
-use cosmwasm_std::{Deps, Empty, StdError, StdResult};
-use cw721_base::QueryMsg;
+use cosmwasm_std::{Deps, StdError, StdResult};
 use cw721::OwnerOfResponse;
 
-use crate::msg::IsOwnerOfNftResponse;
+use crate::msg::{CwQuery, IsOwnerOfNftResponse};
 
 pub fn query_user_ownership_of_nft(
     deps: Deps, 
@@ -12,10 +11,10 @@ pub fn query_user_ownership_of_nft(
 ) -> StdResult<IsOwnerOfNftResponse> {
     let request: Result<OwnerOfResponse, StdError> = match deps.querier.query_wasm_smart(
         nft_collection_id,
-        &QueryMsg::<Empty>::OwnerOf { token_id: nft_token_id, include_expired: None }
+        &CwQuery::OwnerOf { token_id: nft_token_id, include_expired: None }
     ) {
         Err(e) => {
-            return Err(e)
+            return Ok( IsOwnerOfNftResponse { result: false })
         },      
         Ok(res) => {
             Ok(res)

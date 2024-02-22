@@ -1,1 +1,1 @@
-16fafa6b1dd9e8292cab4b28b18678f4dfd4b0f0f58740edea3a89ba58313ba5  stargaze_proxy_contract.wasm
+a99c98aa295226bc09d0e239b995fb876966a9d07023cc4681329e9aee7172d3  stargaze_proxy_contract.wasm
