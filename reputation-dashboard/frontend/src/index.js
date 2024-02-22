@@ -17,11 +17,12 @@ import {
   smartContractCodeInstantiateRPC,
   checkIfContractExistsInList,
   hypersignBalanceActivityContracts,
-  osmosisLiquidityUserPositionContracts
+  osmosisLiquidityUserPositionContracts,
+  stargazeNftOwnershipContracts
 } from './smartContract';
 import { buildTable, getNFTTokensData, getContractMetadata, populateActivities } from './elements';
 import "./styles/style.css";
-import { filterCompletedActivities, getActivities, getActivitiesById, getActivity1, getActivity2, getActivityStatusByDidId, getScore, getScoreWithBreakdown, performAsyncActivity, performBalanceActivity, performOsmosisActivity } from './score';
+import { filterCompletedActivities, getActivities, getActivitiesById, getActivity1, getActivity2, getActivityStatusByDidId, getScore, getScoreWithBreakdown, performAsyncActivity, performBalanceActivity, performOsmosisActivity, performStargazeNFTActivity } from './score';
 import { generateAndSignDidDocument, setDidDocument } from './ssi/document';
 import { checkIfDidExists, registerDIDCreateTransaction } from './ssi/rpc';
 
@@ -224,7 +225,7 @@ cardParent.addEventListener('click', async (event) => {
         await performBalanceActivity(signingClient, userAddress, activityIdx[idx], didId)
         found = 1;
       } else if (checkIfContractExistsInList(osmosisLiquidityUserPositionContracts, activityIdx[idx])) {
-        if (!confirm("This is a on-chain activity. You will incur gas fee even if the tx fails. Make sure you have already provided liquidity on Osmosis LP pool")) {
+        if (!confirm("This is a on-chain IBC activity. You will incur gas fee even if the tx fails. Make sure you have already provided liquidity on Osmosis LP pool")) {
           return
         }
 
@@ -232,6 +233,17 @@ cardParent.addEventListener('click', async (event) => {
         let ibc_channel = "channel-14";
         await performOsmosisActivity(signingClient, userAddress, activityIdx[idx], didId, pool_id, ibc_channel)
         found = 1
+      } else if (checkIfContractExistsInList(stargazeNftOwnershipContracts, activityIdx[idx])) {
+        if (!confirm("This is a on-chain IBC activity. You will incur gas fee even if the tx fails. Make sure you already own the NFT on Stargaze")) {
+          return
+        }
+
+        let nftTokenId = "1"
+        let nftCollectionId = "stars1rlp9h426tn2pxt9nsyt39qyjg9lvw3jug0lqekp2w7qqkty5cflsaelepl"
+        let ibcChannel = "channel-15"
+
+        await performStargazeNFTActivity(signingClient, userAddress, activityIdx[idx], didId, nftCollectionId, nftTokenId, ibcChannel)
+        found = 1        
       } else {
         found = 0
         throw new Error("only Hypersign Balance and Osmosis LP position activity contracts are configurable for UI")
@@ -264,52 +276,3 @@ cardParent.addEventListener('click', async (event) => {
   }
 })
 
-function getVerifyButtonElementForActivityIdx(idx) {
-  let verifyBtns = document.getElementsByClassName("activity-verify-btn")
-  for (let i = 0; i < verifyBtns.length; i++) {
-    if (verifyBtns[i].dataset.activityIndex == idx) {
-      verifyBtns[i].innerHTML = '<i class="fas fa-check"></i>';
-      verifyBtns[i].disabled = true;
-      return
-    }
-  }
-}
-
-// Add event to all verify buttons
-// cardParent.addEventListener('click', async (event) => {
-//   const target = event.target;
-
-//   if (target.classList.contains('activity-reload-btn')) {
-//     const idx = target.dataset.activityIndex;
-
-//     try {
-//       let scoreComplete = await getScoreWithBreakdown(signingClient, reputationEngineContractAddress, didId, "")
-//       let activitiesDoneByDidId = scoreComplete["score_breakdown"]["activities"]
-      
-//       if (checkActivityDoneAfterReload(activitiesDoneByDidId, activityIdx[idx])) {
-//         getVerifyButtonElementForActivityIdx(idx)
-//         target.style.display = 'none'
-//         didScore.innerText = await getScore(signingClient, reputationEngineContractAddress, didId, activityManagerContractAddress)
-//         return
-//       } else {
-//         // add alert
-//         alert("Activity has not been completed")
-//       }
-
-//     } catch (error) {
-//       alert(error)
-//     }
-//   }
-// })
-
-
-// // check if particular activity is done
-// function checkActivityDoneAfterReload(activitiesDoneByDidId, activityIdToSearch) {
-//   for (let i = 0; i < activitiesDoneByDidId.length; i++) {
-//     if (activityIdToSearch === activitiesDoneByDidId[i]["id"]) {
-//       return true
-//     }
-//   }
-
-//   return false
-// }

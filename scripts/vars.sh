@@ -1,8 +1,8 @@
 # vars.sh
 
 # Common
-export MNEMONIC="hair relief wage soon honey insane similar about hope alone bind damp"
-export ACC_NAME="demo12"
+export MNEMONIC="minor shoe cannon gauge arctic ill sound deposit wet cake couple evil"
+export ACC_NAME="demoacc"
 
 # Hypersign
 SOURCE_HYPERSIGN_ACC_NAME="node1"

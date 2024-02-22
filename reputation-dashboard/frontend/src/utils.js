@@ -89,6 +89,19 @@ export function constructExecutePerformOsmosisActivity(poolId, didId, ibcChannel
     }
 }
 
+export function constructExecutePerformStargazeActivity(didId, nftCollectionId, nftTokenId, ibcChannel) {
+    return  {
+        "perform_activity": {
+            "activity_params": {
+                "nft_collection_id": nftCollectionId,
+                "nft_token_id": nftTokenId,
+                "ibc_channel": ibcChannel
+            },
+            "did_id": didId,
+        }
+    }
+}
+
 export function constructExecutePerformBalanceActivity(didId) {
     return  {
         "perform_activity": {
