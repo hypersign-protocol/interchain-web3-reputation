@@ -102,7 +102,8 @@ export const osmosisLiquidityUserPositionContracts = [
 ]
 
 export const stargazeNftOwnershipContracts = [
-    "hid1dl75838620ns00tf90ckwx428qxtvh4cv6wg9qakf3syrys2v3cqvayqhk"
+    "hid1dl75838620ns00tf90ckwx428qxtvh4cv6wg9qakf3syrys2v3cqvayqhk",
+    "hid17de08x8pe43kmzdea08u3q7dv5t3pfpujnnkz2vw7n5hldnwt5sshhqx9f"
 ]
 
 export function checkIfContractExistsInList(contractList, contractToSearch) {

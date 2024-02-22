@@ -240,7 +240,7 @@ cardParent.addEventListener('click', async (event) => {
 
         let nftTokenId = "1"
         let nftCollectionId = "stars1rlp9h426tn2pxt9nsyt39qyjg9lvw3jug0lqekp2w7qqkty5cflsaelepl"
-        let ibcChannel = "channel-15"
+        let ibcChannel = "channel-17"
 
         await performStargazeNFTActivity(signingClient, userAddress, activityIdx[idx], didId, nftCollectionId, nftTokenId, ibcChannel)
         found = 1        
