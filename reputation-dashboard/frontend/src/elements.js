@@ -32,6 +32,19 @@ function returnIconElementByChain(activityContractAddress) {
   }
 }
 
+
+// Return a span element with "IBC" text if the activity is of IBC type
+function returnIbcIcon(activityContractAddress) {
+  if (
+    (checkIfContractExistsInList(osmosisLiquidityUserPositionContracts, activityContractAddress)) ||
+    (checkIfContractExistsInList(stargazeNftOwnershipContracts, activityContractAddress))
+  )  {
+    return '<span class="badge badge-primary" style="color: black;">IBC</span>'
+  } else {
+    return ''
+  }
+}
+
 export function populateActivities(htmlElem, activityList, activitiesAlreadyDone) {
   let activityIdx = {};
 
@@ -39,7 +52,8 @@ export function populateActivities(htmlElem, activityList, activitiesAlreadyDone
   for (var i = 0; i < activityList.length; i++) {
     var activityPos = i + 1;
     var activityHtml = null;
-    var icon = returnIconElementByChain(activityList[i]["id"])
+    var activityIcon = returnIconElementByChain(activityList[i]["id"])
+    var ibcText = returnIbcIcon(activityList[i]["id"])
 
     if (isActivityDone(activitiesAlreadyDone, activityList[i])) {
       activityHtml = `
@@ -48,7 +62,7 @@ export function populateActivities(htmlElem, activityList, activitiesAlreadyDone
           <div class="accordion-item">
               <h2 class="accordion-header" id="heading-${activityPos}">
                   <button type="button" class="accordion-button collapsed headerBtn" data-bs-toggle="collapse" data-bs-target="#collapse-${activityPos}">
-                    <span class="nameSpan">${icon}  <b>${activityList[i]["name"]}</b></span>
+                    <span class="nameSpan">${activityIcon}  <b>${activityList[i]["name"]}</b> </span> ${ibcText}
                     <span id="check-icon-${activityPos}" class="checkIconSpan"><i class="fas fa-check"></i></span>
                   </button>                                    
               </h2>
@@ -69,7 +83,7 @@ export function populateActivities(htmlElem, activityList, activitiesAlreadyDone
           <div class="accordion-item">
               <h2 class="accordion-header" id="heading-${activityPos}">
                   <button type="button" class="accordion-button collapsed headerBtn" data-bs-toggle="collapse" data-bs-target="#collapse-${activityPos}">
-                    <span class="nameSpan">${icon}  <b>${activityList[i]["name"]}</b></span>
+                    <span class="nameSpan">${activityIcon}  <b>${activityList[i]["name"]}</b> </span> ${ibcText}
                     <span class="scoreSpan">
                     <ul style="list-style: none; display: block; text-align: center;">
                         <li><i data-v-6388b9fd="" class="fa fa-trophy"></i></li>
