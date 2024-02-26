@@ -6,7 +6,7 @@ use cosmwasm_std::{
 use crate::error::{ContractError, Never};
 use crate::ack::{make_ack_fail, make_ack_success};
 use crate::msg::IbcQueryMsg;
-use crate::osmosis::query_user_positions;
+use crate::query::query_user_ownership_of_nft;
 
 pub const IBC_VERSION: &str = "zk-1";
 
@@ -113,16 +113,21 @@ pub fn do_ibc_packet_receive(
     let msg: IbcQueryMsg = from_json(&msg.packet.data)?;
 
     match msg {
-        IbcQueryMsg::Verify { wallet_address, pool_id, ..  } => execute_query(deps, wallet_address, pool_id)
+        IbcQueryMsg::Verify {
+            user_address,
+            nft_collection_id,
+            nft_token_id,
+            ..
+        } => execute_query(deps, user_address, nft_collection_id, nft_token_id)
     }
 }
 
-fn execute_query(deps: DepsMut, wallet_address: String, pool_id: u64) -> Result<IbcReceiveResponse, ContractError> {
-    let has_position_in_pool = true;
+fn execute_query(deps: DepsMut, user_address: String, nft_collection_id: String, nft_token_id: String) -> Result<IbcReceiveResponse, ContractError> {
+    let is_user_owner_of_nft = query_user_ownership_of_nft(deps.as_ref(), user_address, nft_collection_id, nft_token_id).unwrap().result;
 
     Ok(IbcReceiveResponse::new()
         .add_attribute("method", "execute_query")
-        .set_ack(make_ack_success(has_position_in_pool)))
+        .set_ack(make_ack_success(is_user_owner_of_nft)))
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
