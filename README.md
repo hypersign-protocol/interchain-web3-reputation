@@ -1,4 +1,4 @@
-#  Interchain Web3 Reputation
+#  Interchain Web3 Reputation (In Active Development)
 
 Interchain web3 reputation is an experimental project where we want to create web3 reputation of wallet address (s) across all Cosmos chains based on their on-chain activities.
 
@@ -8,6 +8,7 @@ Interchain web3 reputation is an experimental project where we want to create we
 - `activities` - It consists of example Activity contracts along with `activity` package
 - `reputation-dashboard` - Contracts and Frontend related to Web3 reputation dashboard
 - `osmosis` - Contracts that are meant to be deployed on the osmosis chain
+- `stargaze` - Contracts that are meant to be deployed on the Stargaze chain
 
 ## Getting started with the project
 

@@ -1,4 +1,4 @@
-import { smartContractQueryRPC } from './smartContract';
+import { checkIfContractExistsInList, hypersignBalanceActivityContracts, osmosisLiquidityUserPositionContracts, smartContractQueryRPC, stargazeNftOwnershipContracts } from './smartContract';
 import { findAlreadyDoneActivities as isActivityDone } from './utils';
 
 /**
@@ -19,6 +19,32 @@ import { findAlreadyDoneActivities as isActivityDone } from './utils';
       </div>
     `
  */
+
+function returnIconElementByChain(activityContractAddress) {
+  if (checkIfContractExistsInList(hypersignBalanceActivityContracts, activityContractAddress)) {
+    return '<span><img src="https://static.tildacdn.one/tild6464-6463-4136-b535-353636396131/Frame-24-_1_.ico"  width="30" height="30"></span>'
+  } else if (checkIfContractExistsInList(osmosisLiquidityUserPositionContracts, activityContractAddress)) {
+    return '<span><img src="https://assets-global.website-files.com/623a0c9828949e55356286f9/62548053f3fb883e5926a5cf_icon-32.png"></span>'
+  } else if (checkIfContractExistsInList(stargazeNftOwnershipContracts, activityContractAddress)) {
+    return '<span><img src="https://www.stargaze.zone/favicon.ico"></span>'
+  } else {
+    return ''
+  }
+}
+
+
+// Return a span element with "IBC" text if the activity is of IBC type
+function returnIbcIcon(activityContractAddress) {
+  if (
+    (checkIfContractExistsInList(osmosisLiquidityUserPositionContracts, activityContractAddress)) ||
+    (checkIfContractExistsInList(stargazeNftOwnershipContracts, activityContractAddress))
+  )  {
+    return '<span class="badge badge-primary" style="color: black;">IBC</span>'
+  } else {
+    return ''
+  }
+}
+
 export function populateActivities(htmlElem, activityList, activitiesAlreadyDone) {
   let activityIdx = {};
 
@@ -26,6 +52,8 @@ export function populateActivities(htmlElem, activityList, activitiesAlreadyDone
   for (var i = 0; i < activityList.length; i++) {
     var activityPos = i + 1;
     var activityHtml = null;
+    var activityIcon = returnIconElementByChain(activityList[i]["id"])
+    var ibcText = returnIbcIcon(activityList[i]["id"])
 
     if (isActivityDone(activitiesAlreadyDone, activityList[i])) {
       activityHtml = `
@@ -34,7 +62,7 @@ export function populateActivities(htmlElem, activityList, activitiesAlreadyDone
           <div class="accordion-item">
               <h2 class="accordion-header" id="heading-${activityPos}">
                   <button type="button" class="accordion-button collapsed headerBtn" data-bs-toggle="collapse" data-bs-target="#collapse-${activityPos}">
-                    <span class="nameSpan"><i class="fa fa-tasks" aria-hidden="true"></i>  <b>${activityList[i]["name"]}</b></span>
+                    <span class="nameSpan">${activityIcon}  <b>${activityList[i]["name"]}</b> </span> ${ibcText}
                     <span id="check-icon-${activityPos}" class="checkIconSpan"><i class="fas fa-check"></i></span>
                   </button>                                    
               </h2>
@@ -55,7 +83,7 @@ export function populateActivities(htmlElem, activityList, activitiesAlreadyDone
           <div class="accordion-item">
               <h2 class="accordion-header" id="heading-${activityPos}">
                   <button type="button" class="accordion-button collapsed headerBtn" data-bs-toggle="collapse" data-bs-target="#collapse-${activityPos}">
-                    <span class="nameSpan"><i class="fa fa-tasks" aria-hidden="true"></i>  <b>${activityList[i]["name"]}</b></span>
+                    <span class="nameSpan">${activityIcon}  <b>${activityList[i]["name"]}</b> </span> ${ibcText}
                     <span class="scoreSpan">
                     <ul style="list-style: none; display: block; text-align: center;">
                         <li><i data-v-6388b9fd="" class="fa fa-trophy"></i></li>
