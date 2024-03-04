@@ -1,24 +1,6 @@
-import { checkIfContractExistsInList, hypersignBalanceActivityContracts, osmosisLiquidityUserPositionContracts, smartContractQueryRPC, stargazeNftOwnershipContracts } from './smartContract';
+import { checkIfContractExistsInList, hypersignBalanceActivityContracts, omniflixNftOwnershipContracts, osmosisLiquidityUserPositionContracts, smartContractQueryRPC, stargazeNftOwnershipContracts } from './smartContract';
 import { findAlreadyDoneActivities as isActivityDone } from './utils';
 
-/**
-  var activityHtml = `
-        <div class="card mb-3">
-        <div class="card-body">
-          <div class="row">
-            <div class="col-sm-8">
-              <p class="card-title">Id: <span id="activity${activityPos}contractaddr"></span></p>
-              <h5 class="card-title">Name: <span id="activity${activityPos}name"></span></h5>
-              <b class="card-title">Score: <span id="activity${activityPos}score"></span></b>
-            </div>
-            <div class="col-sm-4 text-right">
-              <button class="btn btn-success verify-btn" id="activity${activityPos}verify">Verify</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    `
- */
 
 function returnIconElementByChain(activityContractAddress) {
   if (checkIfContractExistsInList(hypersignBalanceActivityContracts, activityContractAddress)) {
@@ -27,6 +9,8 @@ function returnIconElementByChain(activityContractAddress) {
     return '<span><img src="https://assets-global.website-files.com/623a0c9828949e55356286f9/62548053f3fb883e5926a5cf_icon-32.png"></span>'
   } else if (checkIfContractExistsInList(stargazeNftOwnershipContracts, activityContractAddress)) {
     return '<span><img src="https://www.stargaze.zone/favicon.ico"></span>'
+  } else if (checkIfContractExistsInList(omniflixNftOwnershipContracts, activityContractAddress)) {
+    return '<span><img src="https://omniflix.network/favicon.ico"></span>'
   } else {
     return ''
   }

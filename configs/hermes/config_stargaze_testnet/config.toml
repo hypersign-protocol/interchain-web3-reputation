@@ -1,0 +1,99 @@
+[global]
+log_level = "info"
+
+[mode.clients]
+enabled = true
+refresh = true
+misbehaviour = true
+
+[mode.connections]
+enabled = false
+
+[mode.channels]
+enabled = false
+
+[mode.packets]
+enabled = true
+clear_interval = 100
+clear_on_start = true
+tx_confirmation = false
+auto_register_counterparty_payee = false
+
+[mode.packets.ics20_max_memo_size]
+enabled = true
+size = 32768
+
+[mode.packets.ics20_max_receiver_size]
+enabled = true
+size = 2048
+
+[rest]
+enabled = false
+host = "127.0.0.1"
+port = 3000
+
+[telemetry]
+enabled = false
+host = "127.0.0.1"
+port = 3001
+
+[telemetry.buckets.latency_submitted]
+start = 500
+end = 20000
+buckets = 10
+
+[telemetry.buckets.latency_confirmed]
+start = 1000
+end = 30000
+buckets = 10
+
+[tracing_server]
+enabled = false
+port = 5555
+
+[[chains]]
+id = 'hidnode'
+type = "CosmosSdk"
+rpc_addr = 'http://localhost:26657'
+grpc_addr = 'http://localhost:9090'
+event_source = { mode = 'push', url = 'ws://localhost:26657/websocket', batch_delay = '200ms' }
+rpc_timeout = '15s'
+trusted_node = true
+account_prefix = 'hid'
+key_name = 'wallet1'
+store_prefix = 'ibc'
+gas_price = { price = 0.001, denom = 'uhid' }
+gas_multiplier = 1.2
+default_gas = 1000000
+max_gas = 10000000
+max_msg_num = 30
+max_tx_size = 2097152
+clock_drift = '5s'
+max_block_time = '30s'
+trusting_period = '14days'
+trust_threshold = { numerator = '2', denominator = '3' }
+
+
+
+[[chains]]
+id = 'elgafar-1'
+type = "CosmosSdk"
+rpc_addr = 'https://rpc.elgafar-1.stargaze-apis.com:443'
+grpc_addr = 'http://grpc-1.elgafar-1.stargaze-apis.com:26660'
+event_source = { mode = 'push', url = 'wss://rpc.elgafar-1.stargaze-apis.com:443/websocket', batch_delay = '200ms' }
+rpc_timeout = '15s'
+trusted_node = true
+account_prefix = 'stars'
+key_name = 'wallet4'
+store_prefix = 'ibc'
+gas_price = { price = 0.01, denom = 'ustars' }
+gas_multiplier = 1.2
+default_gas = 1000000
+max_gas = 10000000
+max_msg_num = 30
+max_tx_size = 2097152
+clock_drift = '5s'
+max_block_time = '30s'
+trusting_period = '1day'
+trust_threshold = { numerator = '1', denominator = '3' }
+

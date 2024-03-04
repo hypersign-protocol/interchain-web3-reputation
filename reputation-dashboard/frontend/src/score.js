@@ -8,7 +8,8 @@ import {
     constructExecutePerformOsmosisActivity,
     constructCheckActivityStatus,
     constructExecutePerformBalanceActivity,
-    constructExecutePerformStargazeActivity
+    constructExecutePerformStargazeActivity,
+    constructExecutePerformOmniflixActivity
 } from "./utils";
 
 /**
@@ -70,10 +71,19 @@ export async function performOsmosisActivity(client, author, activityContractAdd
 }
 
 export async function performStargazeNFTActivity(client, author, activityContractAddr, didId, nftCollectionId, nftTokenId, ibcChannel) {
-    console.log("Inside performStargazeNFTActivity ", nftCollectionId, nftTokenId, ibcChannel)
     
     try {
         await smartContractExecuteRPC(client, author, activityContractAddr, constructExecutePerformStargazeActivity(didId, nftCollectionId, nftTokenId, ibcChannel))
+    } catch (error) {
+        console.log("errrr ", error)
+        throw new Error("unable to perform Stargaze NFT Ownership activity: ", error)
+    }
+}
+
+export async function performOmniflixNFTActivity(client, author, activityContractAddr, didId, denomId, nftTokenId, ibcChannel) {
+    
+    try {
+        await smartContractExecuteRPC(client, author, activityContractAddr, constructExecutePerformOmniflixActivity(didId, denomId, nftTokenId, ibcChannel))
     } catch (error) {
         console.log("errrr ", error)
         throw new Error("unable to perform Stargaze NFT Ownership activity: ", error)

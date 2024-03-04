@@ -31,7 +31,7 @@ export async function smartContractCodeInstantiateRPC(
         const contractAddress = txResult["contractAddress"]
         return contractAddress
     } catch (err) {
-        console.log(err.message)
+        console.log(err)
         alert("Transaction has failed, Error Log below \n\n " + err.message)
         return null
     }
@@ -98,13 +98,18 @@ export const hypersignBalanceActivityContracts = [
 ]
 
 export const osmosisLiquidityUserPositionContracts = [
-    "hid1d8m875429a9ap2w3yx4z9lrghzv67t5vpunvx9p38hxyzfmsqtmqaagwvl"
+    "hid1d8m875429a9ap2w3yx4z9lrghzv67t5vpunvx9p38hxyzfmsqtmqaagwvl",
+    "hid1usz2nl5cl4eednc3y5m7rwms2um9yzsqljfxp7r9r325gnr62tdqa77h0m"
 ]
 
 export const stargazeNftOwnershipContracts = [
     "hid1dl75838620ns00tf90ckwx428qxtvh4cv6wg9qakf3syrys2v3cqvayqhk",
     "hid17de08x8pe43kmzdea08u3q7dv5t3pfpujnnkz2vw7n5hldnwt5sshhqx9f"
 ]
+
+export const omniflixNftOwnershipContracts = [
+    "omniflix19vrjp7fll6a729v464wlxr8a2xqhcddc0e5f0gxkv4fcyl8n23usxqqdv6"
+] 
 
 export function checkIfContractExistsInList(contractList, contractToSearch) {
     for (let i=0; i < contractList.length; i++) {

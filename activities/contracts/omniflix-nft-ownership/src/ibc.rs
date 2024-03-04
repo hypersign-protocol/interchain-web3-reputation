@@ -1,12 +1,11 @@
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::entry_point;
 use cosmwasm_std::{
-    from_json, DepsMut, Env, IbcBasicResponse, IbcChannel, IbcChannelCloseMsg, IbcChannelConnectMsg, IbcChannelOpenMsg, IbcChannelOpenResponse, IbcOrder, IbcPacketAckMsg, IbcPacketReceiveMsg, IbcPacketTimeoutMsg, IbcReceiveResponse
+    from_json, DepsMut, Env, IbcBasicResponse, IbcChannel, IbcChannelCloseMsg, IbcChannelConnectMsg, IbcChannelOpenMsg, IbcChannelOpenResponse, IbcOrder, IbcPacketAckMsg, IbcPacketReceiveMsg, IbcPacketTimeoutMsg, IbcReceiveResponse, StdError,
 };
-use crate::error::{ContractError, Never};
-use crate::ack::{make_ack_fail, make_ack_success};
+use crate::error::ContractError;
 use crate::msg::IbcQueryMsg;
-use crate::query::query_user_ownership_of_nft;
+use crate::state::StargazeActivityContract;
 
 pub const IBC_VERSION: &str = "zk-1";
 
@@ -57,7 +56,7 @@ pub fn ibc_channel_open(
     msg: IbcChannelOpenMsg,
 ) -> Result<IbcChannelOpenResponse, ContractError> {
     validate_order_and_version(msg.channel(), msg.counterparty_version())?;
-    Ok(())
+    Ok(None)
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
@@ -88,58 +87,40 @@ pub fn ibc_channel_close(
 
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn ibc_packet_receive(
-    deps: DepsMut,
-    env: Env,
-    msg: IbcPacketReceiveMsg,
-) -> Result<IbcReceiveResponse, Never> {
-    // Regardless of if our processing of this packet works we need to
-    // commit an ACK to the chain. As such, we wrap all handling logic
-    // in a seprate function and on error write out an error ack.
-    match do_ibc_packet_receive(deps, env, msg) {
-        Ok(response) => Ok(response),
-        Err(error) => Ok(IbcReceiveResponse::new()
-            .add_attribute("method", "ibc_packet_receive")
-            .add_attribute("error", error.to_string())
-            .set_ack(make_ack_fail(error.to_string()))),
-    }
-}
-
-pub fn do_ibc_packet_receive(
-    deps: DepsMut,
+    _deps: DepsMut,
     _env: Env,
-    msg: IbcPacketReceiveMsg,
+    _msg: IbcPacketReceiveMsg,
 ) -> Result<IbcReceiveResponse, ContractError> {
-    // The channel this packet is being relayed along on this chain.
-    let msg: IbcQueryMsg = from_json(&msg.packet.data)?;
-
-    match msg {
-        IbcQueryMsg::Verify {
-            user_address,
-            nft_collection_id,
-            nft_token_id,
-            ..
-        } => execute_query(deps, user_address, nft_collection_id, nft_token_id)
-    }
+    Ok(IbcReceiveResponse::new().add_attribute("method", "ibc_packet_recieve"))
 }
 
-fn execute_query(deps: DepsMut, user_address: String, nft_collection_id: String, nft_token_id: String) -> Result<IbcReceiveResponse, ContractError> {
-    let is_user_owner_of_nft = query_user_ownership_of_nft(deps.as_ref(), user_address, nft_collection_id, nft_token_id).unwrap().result;
-
-    Ok(IbcReceiveResponse::new()
-        .add_attribute("method", "execute_query")
-        .set_ack(make_ack_success(is_user_owner_of_nft)))
-}
 
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn ibc_packet_ack(
-    _deps: DepsMut,
-    _env: Env,
-    _ack: IbcPacketAckMsg,
+    deps: DepsMut,
+    env: Env,
+    msg: IbcPacketAckMsg,
 ) -> Result<IbcBasicResponse, ContractError> {
+    let original_packet: IbcQueryMsg = from_json(&msg.original_packet.data)?;
+    
+    let ack: bool = from_json(&msg.acknowledgement.data)?;
 
-    Ok(IbcBasicResponse::new().add_attribute("method", "ibc_packet_ack"))
+    match original_packet {
+        IbcQueryMsg::Verify { did_id, .. } => acknowledge_query(deps, env, ack, did_id),  
+    }
 }
 
+pub fn acknowledge_query(deps: DepsMut, env: Env, ack_result: bool, did_id: String) -> Result<IbcBasicResponse, ContractError> {
+    if ack_result {
+        StargazeActivityContract::default().activity_map.save(deps.storage, did_id.clone(), &true)?;
+        Ok(IbcBasicResponse::new()
+            .add_attribute("method", "ibc_packet_ack")
+        )
+    } else {
+        return Err(ContractError::Std(StdError::generic_err("criteria for activity not met")))
+    }
+
+}
 
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn ibc_packet_timeout(
