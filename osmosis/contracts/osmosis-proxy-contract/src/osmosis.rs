@@ -1,6 +1,10 @@
-use cosmwasm_std::{CustomQuery, QueryRequest, Deps, StdResult, to_json_vec, StdError, SystemResult, ContractResult, from_json};
+use anybuf::Anybuf;
+use cosmwasm_std::{from_json, to_json_vec, Binary, ContractResult, CustomQuery, Deps, QueryRequest, StdError, StdResult, SystemResult};
+use osmosis_std::types::osmosis::concentratedliquidity::v1beta1::ConcentratedliquidityQuerier;
 use schemars::JsonSchema;
 use serde::{de::DeserializeOwned, Serialize, Deserialize};
+
+use crate::msg::UserPositionsResponse;
 
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
@@ -19,36 +23,29 @@ pub struct UserPositionExistsResponse {
     pub result: bool
 }
 
-
-pub fn query_user_positions(deps: Deps, address: String, pool_id: u64) -> StdResult<UserPositionExistsResponse> {
-    let request = QueryRequest::Custom(OsmosisQuery::UserPositionExists 
-        { 
-            address: address.into(), 
-            pool_id: pool_id.into()
-        });
-
-    let _: UserPositionExistsResponse = match query(deps, &request) {
-        Err(e) => {
-            return Err(e)
-        },      
-        Ok(res) => {
-            return Ok(res)
-        }
-    };
-    
+fn create_data(user_address: String, pool_id: u64 ) -> Binary {
+    Binary(
+        Anybuf::new()
+        .append_string(1, user_address)
+        .append_uint64(2, pool_id)
+        .into_vec()
+    )
 }
 
-fn query<U: DeserializeOwned>(deps: Deps, request: &QueryRequest<OsmosisQuery>) -> StdResult<U> {
-    let raw = to_json_vec(request).map_err(|serialize_err| {
-        StdError::generic_err(format!("Serializing QueryRequest: {serialize_err}"))
+pub fn query_user_positions(deps: Deps, address: String, pool_id: u64) -> StdResult<UserPositionExistsResponse> {
+    let user_position_response: UserPositionsResponse = deps.querier.query(&QueryRequest::Stargate { 
+        path: "/osmosis.concentratedliquidity.v1beta1.Query/UserPositions".to_string(), 
+        data: create_data(address.clone(), pool_id.clone())
     })?;
-    match deps.querier.raw_query(&raw) {
-        SystemResult::Err(system_err) => Err(StdError::generic_err(format!(
-            "Querier system error: {system_err}"
-        ))),
-        SystemResult::Ok(ContractResult::Err(contract_err)) => Err(StdError::generic_err(
-            format!("Querier contract error: {contract_err}"),
-        )),
-        SystemResult::Ok(ContractResult::Ok(value)) => from_json(value),
+
+    
+    if user_position_response.positions.len() > 0 {
+        Ok( UserPositionExistsResponse {
+            result: true
+        })
+    } else {
+        Ok( UserPositionExistsResponse {
+            result: false
+        })
     }
 }

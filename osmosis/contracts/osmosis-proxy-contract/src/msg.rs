@@ -1,4 +1,6 @@
 use cosmwasm_schema::{cw_serde, QueryResponses};
+use cosmwasm_std::Binary;
+use osmosis_std::types::osmosis::concentratedliquidity::v1beta1::FullPositionBreakdown;
 use schemars::JsonSchema;
 use serde::{Serialize, Deserialize};
 
@@ -32,3 +34,16 @@ pub struct HasLiquidityPositionResponse {
     pub result: bool
 }
 
+// Stargate Query
+
+#[cw_serde]
+pub struct UserPositionsResponse {
+    pub positions: Vec<FullPositionBreakdown>,
+    pub pagination: Pagination 
+}
+
+#[cw_serde]
+pub struct Pagination {
+    pub next_key: Option<Binary>,
+    pub total: String
+}

@@ -1,0 +1,7 @@
+{
+    "name": "wallet5",
+    "type": "local",
+    "address": "omniflix1uy4z9zpculg455qqgqtdys8frh39spwv5gr3qa",
+    "pubkey": "{\"@type\":\"/cosmos.crypto.secp256k1.PubKey\",\"key\":\"Ap7HxIYCGSWhPPoH1mTiZJ7bj2JWej7eh/OZlKQCu+tV\"}",
+    "mnemonic": "include tragic proof hip bacon culture chaos soda hour enact fold check"
+}

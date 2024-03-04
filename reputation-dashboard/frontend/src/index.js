@@ -18,11 +18,12 @@ import {
   checkIfContractExistsInList,
   hypersignBalanceActivityContracts,
   osmosisLiquidityUserPositionContracts,
-  stargazeNftOwnershipContracts
+  stargazeNftOwnershipContracts,
+  omniflixNftOwnershipContracts
 } from './smartContract';
 import { buildTable, getNFTTokensData, getContractMetadata, populateActivities } from './elements';
 import "./styles/style.css";
-import { filterCompletedActivities, getActivities, getActivitiesById, getActivity1, getActivity2, getActivityStatusByDidId, getScore, getScoreWithBreakdown, performAsyncActivity, performBalanceActivity, performOsmosisActivity, performStargazeNFTActivity } from './score';
+import { filterCompletedActivities, getActivities, getActivitiesById, getActivity1, getActivity2, getActivityStatusByDidId, getScore, getScoreWithBreakdown, performAsyncActivity, performBalanceActivity, performOmniflixNFTActivity, performOsmosisActivity, performStargazeNFTActivity } from './score';
 import { generateAndSignDidDocument, setDidDocument } from './ssi/document';
 import { checkIfDidExists, registerDIDCreateTransaction } from './ssi/rpc';
 
@@ -229,8 +230,8 @@ cardParent.addEventListener('click', async (event) => {
           return
         }
 
-        let pool_id = 1;
-        let ibc_channel = "channel-14";
+        let pool_id = 130;
+        let ibc_channel = "channel-26";
         await performOsmosisActivity(signingClient, userAddress, activityIdx[idx], didId, pool_id, ibc_channel)
         found = 1
       } else if (checkIfContractExistsInList(stargazeNftOwnershipContracts, activityIdx[idx])) {
@@ -243,6 +244,17 @@ cardParent.addEventListener('click', async (event) => {
         let ibcChannel = "channel-17"
 
         await performStargazeNFTActivity(signingClient, userAddress, activityIdx[idx], didId, nftCollectionId, nftTokenId, ibcChannel)
+        found = 1        
+      } else if (checkIfContractExistsInList(omniflixNftOwnershipContracts, activityIdx[idx])) {
+        if (!confirm("This is a on-chain IBC activity. You will incur gas fee even if the tx fails. Make sure you already own the NFT on Omniflix")) {
+          return
+        }
+
+        let nftTokenId = "1"
+        let denomId = "stars1rlp9h426tn2pxt9nsyt39qyjg9lvw3jug0lqekp2w7qqkty5cflsaelepl"
+        let ibcChannel = "channel-17"
+
+        await performOmniflixNFTActivity(signingClient, userAddress, activityIdx[idx], didId, denomId, nftTokenId, ibcChannel)
         found = 1        
       } else {
         found = 0

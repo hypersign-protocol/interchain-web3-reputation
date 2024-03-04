@@ -5,7 +5,7 @@ use cosmwasm_std::{to_json_binary, Binary, Deps, DepsMut, Env, MessageInfo, Resp
 
 use crate::error::ContractError;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
-use crate::osmosis::query_user_positions;
+use crate::query::query_user_ownership_of_nft;
 
 /*
 // version info for migration info
@@ -33,11 +33,20 @@ pub fn execute(
     unimplemented!()
 }
 
-
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
-        QueryMsg::HasLiquidityPosition { address, pool } => to_json_binary(&query_user_positions(deps, address, pool)?)
+        QueryMsg::IsOwnerOfNft { 
+            user_address, 
+            denom_id, 
+            nft_token_id 
+        } => to_json_binary(
+            &query_user_ownership_of_nft(
+                deps, 
+                user_address, 
+                denom_id, 
+                nft_token_id)?
+        )
     }
 }
 

@@ -102,6 +102,19 @@ export function constructExecutePerformStargazeActivity(didId, nftCollectionId, 
     }
 }
 
+export function constructExecutePerformOmniflixActivity(didId, denomId, nftTokenId, ibcChannel) {
+    return  {
+        "perform_activity": {
+            "activity_params": {
+                "denom_id": denomId,
+                "nft_token_id": nftTokenId,
+                "ibc_channel": ibcChannel
+            },
+            "did_id": didId,
+        }
+    }
+}
+
 export function constructExecutePerformBalanceActivity(didId) {
     return  {
         "perform_activity": {
