@@ -41,7 +41,6 @@ pub fn execute(
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
-        // something
         QueryMsg::QueryScoreByDidId { did_id } => to_json_binary(&query_score_by_did_id(deps, did_id)?),
         QueryMsg::QueryScoreByAddress { user_address } => to_json_binary(&query_score_by_address(deps, user_address)?),
     }
