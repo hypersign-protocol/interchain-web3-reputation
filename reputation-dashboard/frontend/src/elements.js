@@ -10,7 +10,7 @@ function returnIconElementByChain(activityContractAddress) {
   } else if (checkIfContractExistsInList(stargazeNftOwnershipContracts, activityContractAddress)) {
     return '<span><img src="https://www.stargaze.zone/favicon.ico"></span>'
   } else if (checkIfContractExistsInList(omniflixNftOwnershipContracts, activityContractAddress)) {
-    return '<span><img src="https://omniflix.network/favicon.ico"></span>'
+    return '<span><img src="https://omniflix.network/favicon.ico" width="30" height="30"></span>'
   } else {
     return ''
   }
@@ -21,7 +21,8 @@ function returnIconElementByChain(activityContractAddress) {
 function returnIbcIcon(activityContractAddress) {
   if (
     (checkIfContractExistsInList(osmosisLiquidityUserPositionContracts, activityContractAddress)) ||
-    (checkIfContractExistsInList(stargazeNftOwnershipContracts, activityContractAddress))
+    (checkIfContractExistsInList(stargazeNftOwnershipContracts, activityContractAddress)) ||
+    (checkIfContractExistsInList(omniflixNftOwnershipContracts, activityContractAddress))
   )  {
     return '<span class="badge badge-primary" style="color: black;">IBC</span>'
   } else {

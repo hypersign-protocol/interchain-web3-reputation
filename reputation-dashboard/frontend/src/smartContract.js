@@ -108,7 +108,7 @@ export const stargazeNftOwnershipContracts = [
 ]
 
 export const omniflixNftOwnershipContracts = [
-    "omniflix19vrjp7fll6a729v464wlxr8a2xqhcddc0e5f0gxkv4fcyl8n23usxqqdv6"
+    "hid1w83j83pycn6er55qsvp7v2uzq2rpd38yuq508apfvnnxd0lcddxsnfs6yx"
 ] 
 
 export function checkIfContractExistsInList(contractList, contractToSearch) {
