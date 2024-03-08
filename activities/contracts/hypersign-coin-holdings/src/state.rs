@@ -1,10 +1,10 @@
-use activity::{ActivityExecute, ActivityQuery};
+use activity::{ActivityExecute, ActivityQuery, get_blockchain_address, query_did_doc};
 use cosmwasm_std::{Deps, DepsMut, Env, Response, StdError, StdResult, Uint128};
 use cw_storage_plus::{Item, Map};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::{ssi::{get_blockchain_address, query_did_doc}, ContractError};
+use crate::{ContractError};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct ActivityInfo {
@@ -61,7 +61,7 @@ impl<'a> ActivityExecute<ActivityParams> for HypersignCoinHoldingsContract<'a>
         })?;
 
 
-        let wallet_address = get_blockchain_address(&did_doc);
+        let wallet_address = get_blockchain_address(&did_doc, "hid");
         let denom: &str = "uhid";
         let activity_info = ACTIVITY_INFO.load(deps.storage).unwrap();
         let min_balance_threshold: Uint128 = activity_info.threshold_balance;

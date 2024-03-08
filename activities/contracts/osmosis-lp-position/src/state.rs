@@ -1,12 +1,12 @@
 use std::marker::PhantomData;
 
-use activity::{ActivityExecute, ActivityQuery};
+use activity::{ActivityExecute, ActivityQuery, get_blockchain_address, query_did_doc};
 use cosmwasm_std::{from_json, to_json_binary, Binary, Deps, DepsMut, Env, IbcMsg, IbcTimeout, Response, StdError, StdResult, Uint128};
 use cw_storage_plus::{Item, Map};
 use schemars::JsonSchema;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 
-use crate::{msg::{CheckActivityStatusResponse, IbcQueryMsg, NameResponse, ScoreResponse}, ssi::{get_blockchain_address, query_did_doc}, ContractError};
+use crate::{msg::{CheckActivityStatusResponse, IbcQueryMsg, NameResponse, ScoreResponse}, ContractError};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct ActivityInfo {
@@ -63,7 +63,7 @@ impl<'a> ActivityExecute<ActivityParams> for OsmosisActivityContract<'a>
             ContractError::Std(StdError::not_found(format!("DID Document '{}' not found", did_id)))
         })?;
 
-        let wallet_address = get_blockchain_address(&did_doc);
+        let wallet_address = get_blockchain_address(&did_doc, "osmo");
 
         Ok(Response::new()
             .add_attribute("channel", ibc_channel.clone())

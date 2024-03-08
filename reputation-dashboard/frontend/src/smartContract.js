@@ -98,7 +98,7 @@ export const hypersignBalanceActivityContracts = [
 ]
 
 export const osmosisLiquidityUserPositionContracts = [
-    "hid17pv4m8rj3ptyuplana52udkzc50uegcghlrat4t7pmsvnjq04dns84yxl5"
+    "hid1jnhuc0edyzp2glp643n5g6wl4d9hsxpqndhcqsr5epzhpquq25fs0axrq4"
 ]
 
 export const stargazeNftOwnershipContracts = [

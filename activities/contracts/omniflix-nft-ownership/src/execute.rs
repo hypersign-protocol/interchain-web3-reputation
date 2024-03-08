@@ -2,7 +2,7 @@ use cosmwasm_std::{to_json_binary, DepsMut, Env, IbcMsg, IbcTimeout, MessageInfo
 
 use activity::{ActivityExecute, ActivityExecuteMsg};
 use crate::state::{ActivityParams, StargazeActivityContract};
-use crate::{msg::IbcQueryMsg, ssi::get_blockchain_address, ContractError};
+use crate::{msg::IbcQueryMsg, ContractError};
 
 impl<'a> StargazeActivityContract<'a> {
     pub fn execute(

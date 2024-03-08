@@ -230,7 +230,7 @@ cardParent.addEventListener('click', async (event) => {
           return
         }
 
-        let ibc_channel = "channel-34";
+        let ibc_channel = "channel-35";
         await performOsmosisActivity(signingClient, userAddress, activityIdx[idx], didId, ibc_channel)
         found = 1
       } else if (checkIfContractExistsInList(stargazeNftOwnershipContracts, activityIdx[idx])) {

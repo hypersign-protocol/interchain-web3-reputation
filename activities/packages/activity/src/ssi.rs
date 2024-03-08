@@ -83,18 +83,15 @@ fn strip_blockchain_account_id(blockchain_account_id: String) -> Vec<String> {
     elements
 }
 
-fn is_stargaze_address(address: String, prefix: &str) -> bool {
-    address.starts_with(prefix) 
-}
-
-pub fn get_blockchain_address(did: &DidDoc) -> String {
+// Fetches blockchain address from a DID Id based on address prefix
+pub fn get_blockchain_address(did: &DidDoc, prefix: &str) -> String {
     let vms: Vec<VerificationMethod> = did.to_owned().verificationMethod;
     
     // select only the vm which has `osmo` in their blockchainAccountId
     for vm in vms.iter() {
         let blockchain_account_id_elements = strip_blockchain_account_id(vm.clone().blockchainAccountId);
         let address = &blockchain_account_id_elements[2];
-        if is_stargaze_address(address.into(), "omniflix") {
+        if address.starts_with(prefix) {
             return address.into()
         }
     }
