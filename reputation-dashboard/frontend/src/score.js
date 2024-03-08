@@ -62,28 +62,28 @@ export async function getActivityStatusByDidId (client, activityContract, didId)
     return result["is_activity_completed"]
 }
 
-export async function performOsmosisActivity(client, author, activityContractAddr, didId, poolId, ibcChannel) {
+export async function performOsmosisActivity(client, author, activityContractAddr, didId, ibcChannel) {
     try {
-        await smartContractExecuteRPC(client, author, activityContractAddr, constructExecutePerformOsmosisActivity(poolId, didId, ibcChannel))
+        await smartContractExecuteRPC(client, author, activityContractAddr, constructExecutePerformOsmosisActivity(didId, ibcChannel))
     } catch (error) {
         throw new Error("unable to perform Osmosis Liquidity Position activity: ", error)
     }
 }
 
-export async function performStargazeNFTActivity(client, author, activityContractAddr, didId, nftCollectionId, nftTokenId, ibcChannel) {
+export async function performStargazeNFTActivity(client, author, activityContractAddr, didId, nftCollectionId, ibcChannel) {
     
     try {
-        await smartContractExecuteRPC(client, author, activityContractAddr, constructExecutePerformStargazeActivity(didId, nftCollectionId, nftTokenId, ibcChannel))
+        await smartContractExecuteRPC(client, author, activityContractAddr, constructExecutePerformStargazeActivity(didId, nftCollectionId, ibcChannel))
     } catch (error) {
         console.log("errrr ", error)
         throw new Error("unable to perform Stargaze NFT Ownership activity: ", error)
     }
 }
 
-export async function performOmniflixNFTActivity(client, author, activityContractAddr, didId, denomId, nftTokenId, ibcChannel) {
+export async function performOmniflixNFTActivity(client, author, activityContractAddr, didId, denomId, ibcChannel) {
     
     try {
-        await smartContractExecuteRPC(client, author, activityContractAddr, constructExecutePerformOmniflixActivity(didId, denomId, nftTokenId, ibcChannel))
+        await smartContractExecuteRPC(client, author, activityContractAddr, constructExecutePerformOmniflixActivity(didId, denomId, ibcChannel))
     } catch (error) {
         console.log("errrr ", error)
         throw new Error("unable to perform Stargaze NFT Ownership activity: ", error)

@@ -98,15 +98,15 @@ export const hypersignBalanceActivityContracts = [
 ]
 
 export const osmosisLiquidityUserPositionContracts = [
-    "hid17fjaprxxgg8m9mzdktg0lmky6q9kk2wsruer2vs9atsphxn5u2wssd5676"
+    "hid17pv4m8rj3ptyuplana52udkzc50uegcghlrat4t7pmsvnjq04dns84yxl5"
 ]
 
 export const stargazeNftOwnershipContracts = [
-    "hid1fxqvh05m4mg03ujdhsl9muelke6puvmwx69t3k3d9qrghr6dqf8sy98tfy"
+    "hid1lxlh64hypdher378yd9yq0l69l6j388vjevdz0mgrfxvugue9wjqkv78qr"
 ]
 
 export const omniflixNftOwnershipContracts = [
-    "hid13yrfm7u3qwqa2z4y379ap2mcrn8j89fzvk3uuju09zw2ejypcz4s06g9zx"
+    "hid1pc2z57k4py80ap0a7gd42dkr97286t3upgg8f8pj3xzxg7sjrk0q234d88"
 ] 
 
 export function checkIfContractExistsInList(contractList, contractToSearch) {

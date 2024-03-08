@@ -15,7 +15,6 @@ pub enum IbcQueryMsg {
         did_id: String,
         user_address: String,
         denom_id: String,
-        nft_token_id: String
     }
 }
 
@@ -23,10 +22,9 @@ pub enum IbcQueryMsg {
 #[derive(QueryResponses)]
 pub enum QueryMsg {
     #[returns(IsOwnerOfNftResponse)]
-    IsOwnerOfNft {
+    HasNftOfCollection {
         user_address: String,
-        denom_id: String,
-        nft_token_id: String
+        denom_id: String
     }
 }
 

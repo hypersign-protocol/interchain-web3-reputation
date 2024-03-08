@@ -77,11 +77,10 @@ export function constructQueryReputationScore(didId) {
     }
 }
 
-export function constructExecutePerformOsmosisActivity(poolId, didId, ibcChannel) {
+export function constructExecutePerformOsmosisActivity(didId, ibcChannel) {
     return  {
         "perform_activity": {
             "activity_params": {
-                "pool_id": poolId,
                 "ibc_channel": ibcChannel
             },
             "did_id": didId,
@@ -89,12 +88,11 @@ export function constructExecutePerformOsmosisActivity(poolId, didId, ibcChannel
     }
 }
 
-export function constructExecutePerformStargazeActivity(didId, nftCollectionId, nftTokenId, ibcChannel) {
+export function constructExecutePerformStargazeActivity(didId, nftCollectionId, ibcChannel) {
     return  {
         "perform_activity": {
             "activity_params": {
                 "nft_collection_id": nftCollectionId,
-                "nft_token_id": nftTokenId,
                 "ibc_channel": ibcChannel
             },
             "did_id": didId,
@@ -102,12 +100,11 @@ export function constructExecutePerformStargazeActivity(didId, nftCollectionId, 
     }
 }
 
-export function constructExecutePerformOmniflixActivity(didId, denomId, nftTokenId, ibcChannel) {
+export function constructExecutePerformOmniflixActivity(didId, denomId, ibcChannel) {
     return  {
         "perform_activity": {
             "activity_params": {
                 "denom_id": denomId,
-                "nft_token_id": nftTokenId,
                 "ibc_channel": ibcChannel
             },
             "did_id": didId,

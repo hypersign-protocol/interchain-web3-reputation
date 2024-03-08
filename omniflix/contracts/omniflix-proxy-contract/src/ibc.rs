@@ -116,14 +116,13 @@ pub fn do_ibc_packet_receive(
         IbcQueryMsg::Verify {
             user_address,
             denom_id,
-            nft_token_id,
             ..
-        } => execute_query(deps, user_address, denom_id, nft_token_id)
+        } => execute_query(deps, user_address, denom_id)
     }
 }
 
-fn execute_query(deps: DepsMut, user_address: String, denom_id: String, nft_token_id: String) -> Result<IbcReceiveResponse, ContractError> {
-    let is_user_owner_of_nft = query_user_ownership_of_nft(deps.as_ref(), user_address, denom_id, nft_token_id).unwrap().result;
+fn execute_query(deps: DepsMut, user_address: String, denom_id: String) -> Result<IbcReceiveResponse, ContractError> {
+    let is_user_owner_of_nft = query_user_ownership_of_nft(deps.as_ref(), user_address, denom_id).unwrap().result;
 
     Ok(IbcReceiveResponse::new()
         .add_attribute("method", "execute_query")

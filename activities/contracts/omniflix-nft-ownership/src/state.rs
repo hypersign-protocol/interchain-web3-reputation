@@ -16,6 +16,7 @@ pub struct ActivityInfo {
 }
 
 pub const ACTIVITY_INFO: Item<ActivityInfo> = Item::new("activity_info");
+pub const DENOM_ID: Item<String> = Item::new("denom_id");
 
 pub struct StargazeActivityContract<'a> 
 {
@@ -54,8 +55,7 @@ impl<'a> ActivityExecute<ActivityParams> for StargazeActivityContract<'a>
         activity_params: ActivityParams
     ) -> Result<Response, ContractError> {
         let ibc_channel = activity_params.ibc_channel;
-        let denom_id = activity_params.denom_id;
-        let nft_token_id = activity_params.nft_token_id;
+        let denom_id = DENOM_ID.load(deps.as_ref().storage)?;
 
         // Fetch DID Id using x/ssi hooks
         let did_doc = query_did_doc(deps.as_ref(), &did_id)
@@ -69,7 +69,7 @@ impl<'a> ActivityExecute<ActivityParams> for StargazeActivityContract<'a>
             .add_attribute("channel", ibc_channel.clone())
             .add_message(IbcMsg::SendPacket { 
                 channel_id: ibc_channel.clone(), 
-                data: to_json_binary(&IbcQueryMsg::Verify { user_address, denom_id, nft_token_id, did_id })?, 
+                data: to_json_binary(&IbcQueryMsg::Verify { user_address, denom_id, did_id })?, 
                 timeout: IbcTimeout::with_timestamp(env.block.time.plus_seconds(120))
             }
         ))
@@ -114,7 +114,5 @@ impl<'a> ActivityQuery for StargazeActivityContract<'a>
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct ActivityParams {
-    pub denom_id: String,
-    pub nft_token_id: String,
     pub ibc_channel: String,
 }
