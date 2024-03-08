@@ -114,6 +114,5 @@ impl<'a> ActivityQuery for OsmosisActivityContract<'a>
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct ActivityParams {
-    pub pool_id: u64,
     pub ibc_channel: String,
 }
