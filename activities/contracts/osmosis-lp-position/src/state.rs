@@ -16,6 +16,7 @@ pub struct ActivityInfo {
 }
 
 pub const ACTIVITY_INFO: Item<ActivityInfo> = Item::new("activity_info");
+pub const POOL_ID: Item<u64> = Item::new("pool_id");
 
 pub struct OsmosisActivityContract<'a> 
 {
@@ -54,7 +55,7 @@ impl<'a> ActivityExecute<ActivityParams> for OsmosisActivityContract<'a>
         activity_params: ActivityParams
     ) -> Result<Response, ContractError> {
         let ibc_channel = activity_params.ibc_channel;
-        let pool_id = activity_params.pool_id;
+        let pool_id = POOL_ID.load(deps.as_ref().storage)?;
 
         // Fetch DID Id using x/ssi hooks
         let did_doc = query_did_doc(deps.as_ref(), &did_id)
