@@ -16,7 +16,7 @@ impl<'a> StargazeActivityContract<'a> {
             ActivityExecuteMsg::PerformActivity { 
                 did_id, 
                 activity_params 
-            } => self.perform_activity(deps, env, did_id, activity_params)
+            } => self.perform_activity(deps, env, did_id, activity_params),
         }
     }
 }

@@ -114,6 +114,5 @@ impl<'a> ActivityQuery for StargazeActivityContract<'a>
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 pub struct ActivityParams {
-    pub nft_collection_id: String,
     pub ibc_channel: String,
 }

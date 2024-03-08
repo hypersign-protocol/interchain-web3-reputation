@@ -230,7 +230,7 @@ cardParent.addEventListener('click', async (event) => {
           return
         }
 
-        let ibc_channel = "channel-35";
+        let ibc_channel = "channel-36";
         await performOsmosisActivity(signingClient, userAddress, activityIdx[idx], didId, ibc_channel)
         found = 1
       } else if (checkIfContractExistsInList(stargazeNftOwnershipContracts, activityIdx[idx])) {
@@ -239,7 +239,7 @@ cardParent.addEventListener('click', async (event) => {
         }
 
         let nftCollectionId = "stars1rlp9h426tn2pxt9nsyt39qyjg9lvw3jug0lqekp2w7qqkty5cflsaelepl"
-        let ibcChannel = "channel-33"
+        let ibcChannel = "channel-37"
 
         await performStargazeNFTActivity(signingClient, userAddress, activityIdx[idx], didId, nftCollectionId, ibcChannel)
         found = 1        
@@ -248,8 +248,8 @@ cardParent.addEventListener('click', async (event) => {
           return
         }
 
-        let denomId = "onftdenom908eb189dab846a2a4c7687cc72b913b"
-        let ibcChannel = "channel-32"
+
+        let ibcChannel = "channel-38"
 
         await performOmniflixNFTActivity(signingClient, userAddress, activityIdx[idx], didId, denomId, ibcChannel)
         found = 1        
