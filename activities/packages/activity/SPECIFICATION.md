@@ -85,3 +85,5 @@ pub trait ActivityQuery {
     ) -> StdResult<CheckActivityStatusResponse>;
 }
 ```
+## Implementation Example
+

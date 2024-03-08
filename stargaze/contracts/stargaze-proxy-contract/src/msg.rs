@@ -14,7 +14,6 @@ pub enum IbcQueryMsg {
         did_id: String,
         user_address: String,
         nft_collection_id: String,
-        nft_token_id: String
     }
 }
 
@@ -22,19 +21,18 @@ pub enum IbcQueryMsg {
 #[derive(QueryResponses)]
 pub enum QueryMsg {
     #[returns(IsOwnerOfNftResponse)]
-    IsOwnerOfNft {
+    HasNftOfCollection {
         user_address: String,
-        nft_collection_id: String,
-        nft_token_id: String
+        nft_collection_id: String
     }
 }
 
 #[cw_serde]
 pub enum CwQuery {
-    OwnerOf {
-        token_id: String,
-        /// unset or false will filter out expired approvals, you must set to true to see them
-        include_expired: Option<bool>,
+    Tokens {
+        owner: String,
+        start_after: Option<String>,
+        limit: Option<u32>,
     },
 }
 

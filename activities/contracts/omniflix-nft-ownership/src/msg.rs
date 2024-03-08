@@ -9,6 +9,7 @@ pub struct InstantiateMsg {
     pub name: String,
     pub score: Uint128,
     pub description: String,
+    pub denom_id: String
 }
 
 #[cw_serde]
@@ -27,7 +28,6 @@ pub enum IbcQueryMsg {
         did_id: String,
         user_address: String,
         denom_id: String,
-        nft_token_id: String
     }
 }
 

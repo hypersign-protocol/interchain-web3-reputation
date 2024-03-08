@@ -230,31 +230,28 @@ cardParent.addEventListener('click', async (event) => {
           return
         }
 
-        let pool_id = 130;
-        let ibc_channel = "channel-26";
-        await performOsmosisActivity(signingClient, userAddress, activityIdx[idx], didId, pool_id, ibc_channel)
+        let ibc_channel = "channel-34";
+        await performOsmosisActivity(signingClient, userAddress, activityIdx[idx], didId, ibc_channel)
         found = 1
       } else if (checkIfContractExistsInList(stargazeNftOwnershipContracts, activityIdx[idx])) {
         if (!confirm("This is a on-chain IBC activity. You will incur gas fee even if the tx fails. Make sure you already own the NFT on Stargaze")) {
           return
         }
 
-        let nftTokenId = "1"
         let nftCollectionId = "stars1rlp9h426tn2pxt9nsyt39qyjg9lvw3jug0lqekp2w7qqkty5cflsaelepl"
-        let ibcChannel = "channel-17"
+        let ibcChannel = "channel-33"
 
-        await performStargazeNFTActivity(signingClient, userAddress, activityIdx[idx], didId, nftCollectionId, nftTokenId, ibcChannel)
+        await performStargazeNFTActivity(signingClient, userAddress, activityIdx[idx], didId, nftCollectionId, ibcChannel)
         found = 1        
       } else if (checkIfContractExistsInList(omniflixNftOwnershipContracts, activityIdx[idx])) {
         if (!confirm("This is a on-chain IBC activity. You will incur gas fee even if the tx fails. Make sure you already own the NFT on Omniflix")) {
           return
         }
 
-        let nftTokenId = "1"
-        let denomId = "stars1rlp9h426tn2pxt9nsyt39qyjg9lvw3jug0lqekp2w7qqkty5cflsaelepl"
-        let ibcChannel = "channel-17"
+        let denomId = "onftdenom908eb189dab846a2a4c7687cc72b913b"
+        let ibcChannel = "channel-32"
 
-        await performOmniflixNFTActivity(signingClient, userAddress, activityIdx[idx], didId, denomId, nftTokenId, ibcChannel)
+        await performOmniflixNFTActivity(signingClient, userAddress, activityIdx[idx], didId, denomId, ibcChannel)
         found = 1        
       } else {
         found = 0

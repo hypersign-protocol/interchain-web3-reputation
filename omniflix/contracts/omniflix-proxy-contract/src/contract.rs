@@ -36,16 +36,14 @@ pub fn execute(
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
-        QueryMsg::IsOwnerOfNft { 
+        QueryMsg::HasNftOfCollection { 
             user_address, 
-            denom_id, 
-            nft_token_id 
+            denom_id,
         } => to_json_binary(
             &query_user_ownership_of_nft(
                 deps, 
                 user_address, 
-                denom_id, 
-                nft_token_id)?
+                denom_id)?
         )
     }
 }

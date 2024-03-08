@@ -6,7 +6,7 @@ use cosmwasm_std::{
 use crate::error::{ContractError, Never};
 use crate::ack::{make_ack_fail, make_ack_success};
 use crate::msg::IbcQueryMsg;
-use crate::query::query_user_ownership_of_nft;
+use crate::query::query_has_nft_of_a_collection;
 
 pub const IBC_VERSION: &str = "zk-1";
 
@@ -116,14 +116,13 @@ pub fn do_ibc_packet_receive(
         IbcQueryMsg::Verify {
             user_address,
             nft_collection_id,
-            nft_token_id,
             ..
-        } => execute_query(deps, user_address, nft_collection_id, nft_token_id)
+        } => execute_query(deps, user_address, nft_collection_id)
     }
 }
 
-fn execute_query(deps: DepsMut, user_address: String, nft_collection_id: String, nft_token_id: String) -> Result<IbcReceiveResponse, ContractError> {
-    let is_user_owner_of_nft = query_user_ownership_of_nft(deps.as_ref(), user_address, nft_collection_id, nft_token_id).unwrap().result;
+fn execute_query(deps: DepsMut, user_address: String, nft_collection_id: String) -> Result<IbcReceiveResponse, ContractError> {
+    let is_user_owner_of_nft = query_has_nft_of_a_collection(deps.as_ref(), user_address, nft_collection_id).unwrap().result;
 
     Ok(IbcReceiveResponse::new()
         .add_attribute("method", "execute_query")

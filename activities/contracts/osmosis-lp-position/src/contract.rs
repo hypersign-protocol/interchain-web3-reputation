@@ -5,7 +5,7 @@ use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult,
 
 use crate::error::ContractError;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
-use crate::state::{ActivityInfo, ActivityParams, OsmosisActivityContract, ACTIVITY_INFO};
+use crate::state::{ActivityInfo, ActivityParams, OsmosisActivityContract, ACTIVITY_INFO, POOL_ID};
 
 use activity::{ActivityExecuteMsg, ActivityQueryMsg};
 
@@ -29,7 +29,8 @@ pub fn instantiate(
     };
      
     ACTIVITY_INFO.save(deps.storage, &activity_info)?;
-
+    POOL_ID.save(deps.storage, &msg.pool_id)?;
+    
     Ok(Response::new()
         .add_attribute("activity_name", &activity_info.name)
         .add_attribute("activity_score", &activity_info.score.to_string())

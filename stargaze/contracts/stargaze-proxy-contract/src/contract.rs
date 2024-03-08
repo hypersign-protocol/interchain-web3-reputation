@@ -5,7 +5,7 @@ use cosmwasm_std::{to_json_binary, Binary, Deps, DepsMut, Env, MessageInfo, Resp
 
 use crate::error::ContractError;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
-use crate::query::query_user_ownership_of_nft;
+use crate::query::query_has_nft_of_a_collection;
 
 /*
 // version info for migration info
@@ -36,7 +36,7 @@ pub fn execute(
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
-        QueryMsg::IsOwnerOfNft { user_address, nft_collection_id, nft_token_id } => to_json_binary(&query_user_ownership_of_nft(deps, user_address, nft_collection_id, nft_token_id)?)
+        QueryMsg::HasNftOfCollection { user_address, nft_collection_id } => to_json_binary(&query_has_nft_of_a_collection(deps, user_address, nft_collection_id)?)
     }
 }
 

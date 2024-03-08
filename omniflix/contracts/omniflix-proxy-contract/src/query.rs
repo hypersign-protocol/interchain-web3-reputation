@@ -15,8 +15,7 @@ fn create_data(denom_id: String, user_address: String ) -> Binary {
 pub fn query_user_ownership_of_nft(
     deps: Deps, 
     user_address: String, 
-    denom_id: String, 
-    nft_token_id: String
+    denom_id: String,
 ) -> StdResult<IsOwnerOfNftResponse> {
     let response: QueryOwnerONFTsResponse = deps.querier.query(&QueryRequest::Stargate { 
         path: "/OmniFlix.onft.v1beta1.Query/OwnerONFTs".to_string(), 
@@ -37,18 +36,12 @@ pub fn query_user_ownership_of_nft(
             break
         }
     }
-
+ 
     if !collection_found {
-        return Err(StdError::generic_err("collection found err"))
+        Ok( IsOwnerOfNftResponse { result: false } )
+    } else {
+        Ok( IsOwnerOfNftResponse { result: true } )
     }
 
-    // Check if NFT Id exists in collection
-    for nft_id in collection.onft_ids.into_iter() {
-        if nft_id.eq(&nft_token_id) {
-            return Ok( IsOwnerOfNftResponse { result: true } )
-        }
-    }
-
-    Ok( IsOwnerOfNftResponse { result: false } )
 }
 

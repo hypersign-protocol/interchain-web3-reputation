@@ -9,6 +9,7 @@ pub struct InstantiateMsg {
     pub name: String,
     pub score: Uint128,
     pub description: String,
+    pub pool_id: u64
 }
 
 #[cw_serde]
