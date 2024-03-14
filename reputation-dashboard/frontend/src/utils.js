@@ -88,11 +88,10 @@ export function constructExecutePerformOsmosisActivity(didId, ibcChannel) {
     }
 }
 
-export function constructExecutePerformStargazeActivity(didId, nftCollectionId, ibcChannel) {
+export function constructExecutePerformStargazeActivity(didId, ibcChannel) {
     return  {
         "perform_activity": {
             "activity_params": {
-                "nft_collection_id": nftCollectionId,
                 "ibc_channel": ibcChannel
             },
             "did_id": didId,
@@ -100,11 +99,10 @@ export function constructExecutePerformStargazeActivity(didId, nftCollectionId, 
     }
 }
 
-export function constructExecutePerformOmniflixActivity(didId, denomId, ibcChannel) {
+export function constructExecutePerformOmniflixActivity(didId, ibcChannel) {
     return  {
         "perform_activity": {
             "activity_params": {
-                "denom_id": denomId,
                 "ibc_channel": ibcChannel
             },
             "did_id": didId,

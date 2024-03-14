@@ -70,20 +70,20 @@ export async function performOsmosisActivity(client, author, activityContractAdd
     }
 }
 
-export async function performStargazeNFTActivity(client, author, activityContractAddr, didId, nftCollectionId, ibcChannel) {
+export async function performStargazeNFTActivity(client, author, activityContractAddr, didId, ibcChannel) {
     
     try {
-        await smartContractExecuteRPC(client, author, activityContractAddr, constructExecutePerformStargazeActivity(didId, nftCollectionId, ibcChannel))
+        await smartContractExecuteRPC(client, author, activityContractAddr, constructExecutePerformStargazeActivity(didId, ibcChannel))
     } catch (error) {
         console.log("errrr ", error)
         throw new Error("unable to perform Stargaze NFT Ownership activity: ", error)
     }
 }
 
-export async function performOmniflixNFTActivity(client, author, activityContractAddr, didId, denomId, ibcChannel) {
+export async function performOmniflixNFTActivity(client, author, activityContractAddr, didId, ibcChannel) {
     
     try {
-        await smartContractExecuteRPC(client, author, activityContractAddr, constructExecutePerformOmniflixActivity(didId, denomId, ibcChannel))
+        await smartContractExecuteRPC(client, author, activityContractAddr, constructExecutePerformOmniflixActivity(didId, ibcChannel))
     } catch (error) {
         console.log("errrr ", error)
         throw new Error("unable to perform Stargaze NFT Ownership activity: ", error)

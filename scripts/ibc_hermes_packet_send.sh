@@ -2,8 +2,8 @@
 
 set -e
 
-CONTRACT_PORT="wasm.hid17de08x8pe43kmzdea08u3q7dv5t3pfpujnnkz2vw7n5hldnwt5sshhqx9f"
-CHANNEL_ID="channel-0"
+CONTRACT_PORT="wasm.hid1uccyxxcdy4tq3h2jrdjsztpp8a3h8rry8cfjes7w64l0y53jfteqpp9dmm"
+CHANNEL_ID="channel-43"
 SOURCE_CHAIN="hidnode"
 
 while true; do
