@@ -1,3 +1,5 @@
+> **Specification**:  https://github.com/hypersign-protocol/HIPs/blob/main/HIPs/hip-16.md 
+
 #  Interchain Web3 Reputation (In Active Development)
 
 Interchain web3 reputation is an experimental project where we want to create web3 reputation of wallet address (s) across all Cosmos chains based on their on-chain activities.
